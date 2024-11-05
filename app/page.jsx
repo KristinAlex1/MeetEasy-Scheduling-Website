@@ -109,15 +109,24 @@ export default function Home() {
         {howItWorks.map((step,index) =>(
           <div key = {index} className = "text-center">
             <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <span>{index+1}</span>
+            <span className="text-blue-600 font-bold text-xl">{index+1}</span>
             </div>
-            <h3>{step.step}</h3>
-            <p>{step.description}</p>
+            <h3 className="font-semibold text-lg mb-2">{step.step}</h3>
+            <p className="text-gray-600">{step.description}</p>
           </div>  
         ))}
       </div>
     </div>
       
+    <div className="bg-blue-600 text-white rounded-lg p-8 text-center">
+      <h2 className = "text-3xl font-bold mb-4">Want to Simplify Your Scheduling ?</h2>
+      <Link href = "/dashboard">
+      <Button size = "lg" variant = "secondary" className = "text-blue-600"> 
+        Start For Free <ArrowRight className="ml-2 h-5 w-5" /> 
+
+      </Button>
+      </Link>
+    </div>
     </main>
 
     
