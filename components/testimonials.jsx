@@ -1,4 +1,7 @@
-import { CardContent } from "./ui/card";
+"use client" ;
+
+import Autoplay from "embla-carousel-autoplay";
+import { Card, CardContent } from "./ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
 const testimonials = [
@@ -34,7 +37,14 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <Carousel className="w-full max-w-sm">
+    <Carousel 
+        plugins ={[
+            Autoplay({
+                delay: 2000,
+            }),
+        ]}
+        className="w-full mx-auto"
+    >
     <CarouselContent className="-ml-1">
       {Array.from({ length: 5 }).map((_, index) => (
         <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">

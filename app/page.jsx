@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Calendar, Clock, LinkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import Testimonials from "@/components/testimonials";
 
 
 const features = [
@@ -72,9 +73,8 @@ export default function Home() {
 
     <div className="mb-24">
       <h2 className="text-3xl font bold text-center mb-12 text-blue-600">
-        What Our Users Say
+        Key Features
       </h2>
-      <TestimonialCarousel/>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {features.map((feature,index)=>{
@@ -94,6 +94,12 @@ export default function Home() {
         );
       })}</div>
     </div>  
+    <div className="mb-24">
+      <h2 className="text-3xl font bold text-center mb-12 text-blue-600">
+        What Our Users Say
+      </h2>
+      </div>
+      <Testimonials/>
     </main>
   );
   
