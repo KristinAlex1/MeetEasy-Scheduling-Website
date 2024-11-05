@@ -72,8 +72,10 @@ export default function Home() {
 
     <div className="mb-24">
       <h2 className="text-3xl font bold text-center mb-12 text-blue-600">
-        Key Features
+        What Our Users Say
       </h2>
+      <TestimonialCarousel/>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {features.map((feature,index)=>{
           return (
