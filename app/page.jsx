@@ -98,9 +98,29 @@ export default function Home() {
       <h2 className="text-3xl font bold text-center mb-12 text-blue-600">
         What Our Users Say
       </h2>
-      </div>
       <Testimonials/>
+    </div>
+
+    <div className="mb-24">
+      <h2 className="text-3xl font bold text-center mb-12 text-blue-600">
+        How it works
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {howItWorks.map((step,index) =>(
+          <div key = {index} className = "text-center">
+            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <span>{index+1}</span>
+            </div>
+            <h3>{step.step}</h3>
+            <p>{step.description}</p>
+          </div>  
+        ))}
+      </div>
+    </div>
+      
     </main>
+
+    
   );
   
 }
