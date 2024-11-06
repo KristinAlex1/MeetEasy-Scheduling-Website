@@ -20,7 +20,7 @@ model User{
   name              String?
   imageUrl          String?
   events            Event[]       @relation("UserEvents")
-  bookings          Booking[]     @relation("UserEvents")
+  bookings          Booking[]     @relation("UserBookings")
   availability      Availability?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
