@@ -39,3 +39,55 @@ model Event {
   updatedAt   DateTime      @updatedAt
 
 }
+
+model Booking {
+  id              String    @id @default(uuid())
+  eventId         String
+  event           Event     @relation(fields:[eventId], references: [id], onDelete: Cascade)
+  userId          String    
+  user            User      @relation("UserBookings", fields: [userId], references: [id])
+  name            String
+  email           String
+  additionalInfo  String?
+  startTime       DateTime
+  endTime         DateTime
+  meetLink        String
+  googleEventId   String
+  createdId       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Availability{
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id])
+
+  days            DayAvailability[]
+
+  timeGap         Int
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model DayAvailability {
+  id                String  @id @default(uuid())
+  availabilityId    String
+  day               DayOfWeek
+  startTime         DateTime
+  endTime           DateTime
+
+  availability      Availability @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
+}
+
+enum DayOfWeek {
+      MONDAY
+      TUESDAY
+      WEDNESDAY
+      THURSDAY
+      FRIDAY
+      SATURDAY
+      SUNDAY
+
+
+}
