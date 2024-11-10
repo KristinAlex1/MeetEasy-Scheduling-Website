@@ -18,6 +18,7 @@ model User{
   clerkUserId       String        @unique
   email             String        @unique
   name              String?
+  username          String?
   imageUrl          String?
   events            Event[]       @relation("UserEvents")
   bookings          Booking[]     @relation("UserBookings")
@@ -53,7 +54,7 @@ model Booking {
   endTime         DateTime
   meetLink        String
   googleEventId   String
-  createdId       DateTime   @default(now())
+  createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
 
