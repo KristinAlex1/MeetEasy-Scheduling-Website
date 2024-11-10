@@ -18,6 +18,7 @@ model User{
   clerkUserId       String        @unique
   email             String        @unique
   name              String?
+  username          String?
   imageUrl          String?
   events            Event[]       @relation("UserEvents")
   bookings          Booking[]     @relation("UserBookings")
