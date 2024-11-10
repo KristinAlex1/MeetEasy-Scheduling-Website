@@ -6,7 +6,11 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import UserMenu from "./user-menu";
 
 
-const Header = () => {
+
+const Header = async () => {
+ 
+
+
   return <nav className = "mx-auto py-2 px-4 flex justify-between items-center shadow-md border-b-2">
 
         <Link href ={"/"} className = "flex items-center">
