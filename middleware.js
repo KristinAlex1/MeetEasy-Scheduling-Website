@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server'; // Make sure to import NextResponse
 
 // Define the routes that should be protected
 const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/events(.*)",
-  "/meetings(.*)",
-  "/availability(.*)",
+  "/main/dashboard(.*)",
+  "/main/events(.*)",
+  "/main/meetings(.*)",
+  "/main/availability(.*)",
 ]);
 
 export default clerkMiddleware((auth, req) => {
