@@ -1,7 +1,11 @@
-
+import AppLayout from "../meetings/layout";
 
 const Dashboard = () => {
-  return  <div>Dashboard</div>;
+  return  (
+    
+  <AppLayout/>
+
+  )
   
 };
 
