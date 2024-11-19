@@ -9,12 +9,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usernameSchema } from "@/app/lib/validators";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
+import useFetch from "@/hooks/use-fetch";
+import { updateUsername } from "@/actions/user";
+import { BarLoader } from "react-spinners";
 
 const Dashboard = () => {
   const { isLoaded, user } = useUser();
 
   // Initialize form with resolver and default values
-  const { register, handleSubmit, setValue } = useForm({
+  const { register, handleSubmit, setValue, formState:{errors} } = useForm({
     resolver: zodResolver(usernameSchema),
     defaultValues: {
       username: "", // Initial value
@@ -39,9 +42,11 @@ const Dashboard = () => {
     }
   }, [isLoaded, user, setValue]);
 
+  const {loading, error, fn: fnUpdateUsername } = useFetch(updateUsername);
+
   // Handle form submission
   const onSubmit = async (data) => {
-    console.log("Form Submitted with Data:", data);
+    fnUpdateUsername(data.username);
   };
 
   // Show loading state while user data is being fetched
@@ -77,7 +82,14 @@ const Dashboard = () => {
                     className="border rounded-md px-2 py-1"
                   />
                 </div>
+                {errors.username && (<p className="text-red-500 text-sm mt-1">{errors.username.message}</p>)}
+                {error && (
+                  <p className="text-red-500 text-sm mt-1">{error?.mesage}</p>
+                )}
               </div>
+              {loading && (
+                <BarLoader className="mb-4" width = {"100%"} color = "#36d7b7" />
+              )}
               <Button type="submit">Update Username</Button>
             </form>
           </CardContent>
