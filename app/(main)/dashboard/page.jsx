@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AppLayout from "../meetings/layout";
+
 import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -103,7 +103,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      <AppLayout>
+      
         {/* Welcome Card */}
         <Card>
           <CardHeader>
@@ -145,7 +145,7 @@ const Dashboard = () => {
             </form>
           </CardContent>
         </Card>
-      </AppLayout>
+      
     </div>
   );
 };

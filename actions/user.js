@@ -1,7 +1,7 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { db } from "../lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function updateUsername(username) {
   try {
