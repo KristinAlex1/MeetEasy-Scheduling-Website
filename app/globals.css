@@ -2,22 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@media (prefers-color-scheme: dark){
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-@layer utilities{
+@layer utilities {
   .text-balance {
     text-wrap: balance;
   }
   .gradient-title {
     @apply font-extrabold bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text tracking-tighter text-transparent pb-4 pr-2;
   }
-  
 }
 @layer base {
   :root {
