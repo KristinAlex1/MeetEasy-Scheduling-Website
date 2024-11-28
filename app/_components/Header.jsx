@@ -12,7 +12,7 @@ function Header() {
     <div>
       <div className="flex items-center justify-between p-5 shadow-lg">
         <Image
-          src="/logo3.png"
+          src="/logo3.png" // Make sure this image exists in the public folder
           alt="logo"
           width={100}
           height={100}
@@ -34,10 +34,10 @@ function Header() {
         </ul>
         <div className="flex gap-5">
           <LoginLink>
-            <Button variant="ghost"> Login</Button>
+            <Button variant="ghost">Login</Button>
           </LoginLink>
           <RegisterLink>
-            <Button> Get Started</Button>
+            <Button>Get Started</Button>
           </RegisterLink>
         </div>
       </div>

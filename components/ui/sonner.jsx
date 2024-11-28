@@ -1,15 +1,24 @@
 "use client";
-import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
 
-const Toaster = ({
-  ...props
-}) => {
-  const { theme = "system" } = useTheme()
+import { useTheme } from "next-themes";
+import { Toaster as Sonner } from "sonner";
+
+const Toaster = ({ ...props }) => {
+  const { theme = "system" } = useTheme();
+
+  // Fallback for "system" theme
+  const getTheme = (theme) => {
+    if (theme === "system") {
+      return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+    return theme;
+  };
 
   return (
-    (<Sonner
-      theme={theme}
+    <Sonner
+      theme={getTheme(theme)}
       className="toaster group"
       toastOptions={{
         classNames: {
@@ -22,8 +31,9 @@ const Toaster = ({
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
         },
       }}
-      {...props} />)
+      {...props}
+    />
   );
-}
+};
 
-export { Toaster }
+export { Toaster };

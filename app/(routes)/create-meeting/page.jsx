@@ -3,20 +3,21 @@ import React, { useState } from "react";
 import MeetingForm from "./_components/MeetingForm";
 import PreviewMeeting from "./_components/PreviewMeeting";
 
-const CreateMeeting = () => {
-  const [formValue, setFormValue] = useState();
+function CreateMeeting() {
+  const [formValue, setFormValue] = useState(null); // Initialize formValue with null for better type clarity
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3">
-      {/*Meeting Form*/}
+      {/* Meeting Form */}
       <div className="shadow-md border h-screen">
-        <MeetingForm setFormValue={(v) => setFormValue(v)} />
+        <MeetingForm setFormValue={setFormValue} />
       </div>
-      {/*Preview*/}
+      {/* Preview */}
       <div className="md:col-span-2">
         <PreviewMeeting formValue={formValue} />
       </div>
     </div>
   );
-};
+}
 
 export default CreateMeeting;
