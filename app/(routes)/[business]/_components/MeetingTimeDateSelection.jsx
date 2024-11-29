@@ -75,7 +75,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
   const handleScheduleEvent = async () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (regex.test(userEmail) == false) {
-      toast("Enter valid email address");
+      toast("Enter a valid email address.");
       return;
     }
     const docId = Date.now().toString();
@@ -99,7 +99,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       toast("Meeting Scheduled successfully!");
       await sendEmail(userName);
     } catch (error) {
-      console.error("Error scheduling meeting:", error);
+      console.error("Error scheduling meeting:", error.message || error);
       toast("Failed to schedule meeting. Please try again.");
     } finally {
       setLoading(false);
@@ -119,15 +119,18 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         />
       ).toString(); // Ensure this renders correctly as a string
 
-      await plunk.emails.send({
-        to: userEmail,
-        subject: "Meeting Schedule Details",
-        body: emailHtml,
-      });
-
-      router.replace("/confirmation");
+      await plunk.emails
+        .send({
+          to: userEmail,
+          subject: "Meeting Schedule Details",
+          body: emailHtml,
+        })
+        .then((response) => {
+          console.log("Email sent successfully:", response);
+          router.replace("/confirmation");
+        });
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error sending email:", error.message || error);
       toast("Failed to send email. Please try again.");
     }
   };
