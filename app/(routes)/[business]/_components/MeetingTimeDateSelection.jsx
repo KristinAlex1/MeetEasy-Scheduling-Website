@@ -57,7 +57,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       ).padStart(2, "0")} ${period}`;
     });
 
-    console.log(slots);
+    console.log("Generated Time Slots:", slots);
     setTimeSlots(slots);
   };
 
@@ -108,6 +108,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 
   const sendEmail = async (user) => {
     try {
+      // Step 2: Render email HTML
       const emailHtml = render(
         <Email
           businessName={businessInfo?.businessName}
@@ -119,16 +120,17 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         />
       ).toString(); // Ensure this renders correctly as a string
 
-      await plunk.emails
-        .send({
-          to: userEmail,
-          subject: "Meeting Schedule Details",
-          body: emailHtml,
-        })
-        .then((response) => {
-          console.log("Email sent successfully:", response);
-          router.replace("/confirmation");
-        });
+      console.log("Generated Email HTML:", emailHtml); // Debugging email content
+
+      // Step 3: Test Plunk
+      const response = await plunk.emails.send({
+        to: userEmail,
+        subject: "Meeting Schedule Details",
+        body: emailHtml,
+      });
+
+      console.log("Plunk Response:", response); // Log Plunk response
+      router.replace("/confirmation");
     } catch (error) {
       console.error("Error sending email:", error.message || error);
       toast("Failed to send email. Please try again.");
