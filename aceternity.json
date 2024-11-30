@@ -1,0 +1,8 @@
+{
+  "componentsPath": "components/ui",
+  "cnPath": "utils/cn.ts",
+  "tailwindConfigPath": "tailwind.config.js",
+  "components": {
+    "3d-card": "C:\\Users\\krist\\Desktop\\meeteasy\\components\\ui\\3d-card.tsx"
+  }
+}

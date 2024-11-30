@@ -1,9 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, LinkIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
+import { LoginLink } from "@kinde-oss/kinde-auth-nextjs";
 
 function Hero() {
   const features = [
@@ -37,30 +40,38 @@ function Hero() {
             your availability, and let others book time with you seamlessly.
           </p>
           <div className="flex px-10 gap-8 mb-3">
-            <Button>
-              <Image
-                alt="google"
-                src="/search.png" // Ensure this image exists in the public folder
-                width={25}
-                height={25}
-              />
-              Sign up with Google
-            </Button>
-            <Button>
-              <Image
-                alt="facebook"
-                src="/facebook.png" // Ensure this image exists in the public folder
-                width={25}
-                height={25}
-              />
-              Sign up with Facebook
-            </Button>
+            <LoginLink>
+              <Button>
+                <Image
+                  alt="google"
+                  src="/search.png" // Ensure this image exists in the public folder
+                  width={25}
+                  height={25}
+                />
+                Sign up with Google
+              </Button>
+            </LoginLink>
+            <LoginLink>
+              <Button>
+                <Image
+                  alt="facebook"
+                  src="/facebook.png" // Ensure this image exists in the public folder
+                  width={25}
+                  height={25}
+                />
+                Sign up with Facebook
+              </Button>
+            </LoginLink>
           </div>
           <hr />
           <div className="flex justify-center mr-20 mt-3">
-            <Link className="mr-5 text-primary" href="/signup"> {/* Ensure a valid path */}
-              Sign up with Email
-            </Link>
+            <LoginLink>
+              <Link className="mr-5 text-primary" href="/signup">
+                {" "}
+                {/* Ensure a valid path */}
+                Sign up with Email
+              </Link>
+            </LoginLink>
           </div>
         </div>
         <div className="lg:w-1/2 flex justify-center order-1 lg:order-2">

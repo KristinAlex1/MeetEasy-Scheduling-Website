@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -8,7 +7,15 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import TimeDateSelection from "./TimeDateSelection";
 import UserFormInfo from "./UserFormInfo";
-import { collection, doc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { app } from "@/config/FirebaseConfig";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -43,7 +50,9 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       const minutes = totalMinutes % 60;
       const formattedHours = hours > 12 ? hours - 12 : hours; // Convert to 12-hour format
       const period = hours >= 12 ? "PM" : "AM";
-      return `${String(formattedHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`;
+      return `${String(formattedHours).padStart(2, "0")}:${String(
+        minutes
+      ).padStart(2, "0")} ${period}`;
     });
 
     console.log("Generated Time Slots:", slots);
@@ -109,9 +118,9 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
           businessName={businessInfo?.businessName}
         />
       ); // Await to resolve the promise into HTML string
-  
+
       console.log("Generated Email HTML:", emailHtml); // For debugging
-  
+
       // Use Plunk API to send the email
       const response = await fetch("https://api.useplunk.com/v1/send", {
         method: "POST",
@@ -125,12 +134,12 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
           body: emailHtml, // Use the rendered email HTML
         }),
       });
-  
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to send email");
       }
-  
+
       console.log("Email sent successfully!");
       router.replace("/confirmation");
     } catch (error) {
@@ -138,8 +147,6 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       toast("Failed to send email. Please try again.");
     }
   };
-  
-  
 
   const getPrevEventBooking = async (date_) => {
     const q = query(
@@ -233,7 +240,10 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
             Next
           </Button>
         ) : (
-          <Button disabled={!userEmail || !userName} onClick={handleScheduleEvent}>
+          <Button
+            disabled={!userEmail || !userName}
+            onClick={handleScheduleEvent}
+          >
             {loading ? <LoaderIcon className="animate-spin" /> : "Schedule"}
           </Button>
         )}
@@ -243,4 +253,4 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 }
 
 export default MeetingTimeDateSelection;
-``
+``;

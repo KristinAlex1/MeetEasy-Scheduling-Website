@@ -31,15 +31,7 @@ import {
         <Preview>Meeting Details</Preview>
         <Body style={main}>
           <Container>
-            <Section style={centeredImage}>
-              <Img
-                src={
-                  "https://www.dropbox.com/scl/fi/rvu27ta84hi2739ktyppt/logo3.png?rlkey=gg9o4z2w9ict11lne7et635wo&st=y7giw0an&dl=0"
-                }
-                style={image}
-                width={300}
-              />
-            </Section>
+           
   
             <Section style={content}>
               <Row>
