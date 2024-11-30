@@ -9,6 +9,7 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter } from "next/navigation";
 import MeetingEventList from "./meeting-type/_components/MeetingEventList";
+import { Button } from "@/components/ui/button";
 
 function Dashboard() {
   const db = getFirestore(app);
@@ -60,9 +61,21 @@ function Dashboard() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <LogoutLink>Log out</LogoutLink>
-      <MeetingEventList />
+      <div className="flex justify-between px-5 ">
+        <h1 className="border-primary text-primary font-extrabold text-6xl">
+          Dashboard
+        </h1>
+        <LogoutLink>
+          <Button variant="destructive">Log out</Button>
+        </LogoutLink>
+      </div>
+
+      <hr className="my-7 mx-10" style={{ height: '10px' }}/>
+      <div className="px-10">
+        <MeetingEventList />
+
+      </div>
+      
     </div>
   );
 }
