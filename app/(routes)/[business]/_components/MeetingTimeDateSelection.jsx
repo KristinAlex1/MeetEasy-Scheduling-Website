@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -7,19 +8,10 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import TimeDateSelection from "./TimeDateSelection";
 import UserFormInfo from "./UserFormInfo";
-import {
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { collection, doc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
 import { app } from "@/config/FirebaseConfig";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Plunk from "@plunk/node";
 import { render } from "@react-email/render";
 import Email from "@/emails";
 
@@ -36,7 +28,6 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
   const router = useRouter();
   const db = getFirestore(app);
   const [loading, setLoading] = useState(false);
-  const plunk = new Plunk(process.env.NEXT_PUBLIC_PLUNK_API_KEY);
 
   useEffect(() => {
     eventInfo?.duration && createTimeSlot(eventInfo?.duration);
@@ -52,9 +43,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       const minutes = totalMinutes % 60;
       const formattedHours = hours > 12 ? hours - 12 : hours; // Convert to 12-hour format
       const period = hours >= 12 ? "PM" : "AM";
-      return `${String(formattedHours).padStart(2, "0")}:${String(
-        minutes
-      ).padStart(2, "0")} ${period}`;
+      return `${String(formattedHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`;
     });
 
     console.log("Generated Time Slots:", slots);
@@ -74,8 +63,8 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 
   const handleScheduleEvent = async () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (regex.test(userEmail) == false) {
-      toast("Enter a valid email address.");
+    if (!regex.test(userEmail)) {
+      toast("Enter a valid email address");
       return;
     }
     const docId = Date.now().toString();
@@ -84,7 +73,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       await setDoc(doc(db, "ScheduledMeetings", docId), {
         businessName: businessInfo.businessName,
         businessEmail: businessInfo.email,
-        selectedTime: selectedTime,
+        selectedTime,
         selectedDate: date,
         formatedDate: format(date, "PPP"),
         formatedTimeStamp: format(date, "t"),
@@ -92,12 +81,13 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         locationUrl: eventInfo.locationUrl,
         eventId: eventInfo.id,
         id: docId,
-        userName: userName,
-        userEmail: userEmail,
-        userNote: userNote,
+        userName,
+        userEmail,
+        userNote,
       });
+
       toast("Meeting Scheduled successfully!");
-      await sendEmail(userName);
+      await sendEmail(userName); // Trigger the email after Firestore write
     } catch (error) {
       console.error("Error scheduling meeting:", error.message || error);
       toast("Failed to schedule meeting. Please try again.");
@@ -108,28 +98,40 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 
   const sendEmail = async (user) => {
     try {
-      // Step 2: Render email HTML
-      const emailHtml = render(
+      // Render email HTML
+      const emailHtml = await render(
         <Email
           businessName={businessInfo?.businessName}
-          date={format(date, "PPP").toString()}
+          date={format(date, "PPP")}
           duration={eventInfo?.duration}
           meetingTime={selectedTime}
           meetingUrl={eventInfo.locationUrl}
           userFirstName={user}
         />
-      ).toString(); // Ensure this renders correctly as a string
+      ).toString(); // Convert React component to an HTML string
 
-      console.log("Generated Email HTML:", emailHtml); // Debugging email content
+      console.log("Generated Email HTML:", emailHtml); // Debugging purpose
 
-      // Step 3: Test Plunk
-      const response = await plunk.emails.send({
-        to: userEmail,
-        subject: "Meeting Schedule Details",
-        body: emailHtml,
+      // Use Plunk API to send the email
+      const response = await fetch("https://api.useplunk.com/v1/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_PLUNK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          to: userEmail,
+          subject: "Meeting Schedule Details",
+          body: emailHtml, // Pass rendered email HTML
+        }),
       });
 
-      console.log("Plunk Response:", response); // Log Plunk response
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to send email");
+      }
+
+      console.log("Email sent successfully!");
       router.replace("/confirmation");
     } catch (error) {
       console.error("Error sending email:", error.message || error);
@@ -161,7 +163,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
     my-10"
       style={{ borderTopColor: eventInfo?.themeColor }}
     >
-      <Image src="/logo3.png" alt="logo" width={150} height={150} />
+      <Image src="/logo.svg" alt="logo" width={150} height={150} />
       <div className="grid grid-cols-1 md:grid-cols-3 mt-5">
         <div className="p-4 border-r">
           <h2>{businessInfo?.businessName}</h2>
@@ -196,7 +198,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
             </Link>
           </div>
         </div>
-        {step == 1 ? (
+        {step === 1 ? (
           <TimeDateSelection
             date={date}
             enableTimeSlot={enableTimeSlot}
@@ -215,12 +217,12 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         )}
       </div>
       <div className="flex gap-3 justify-end">
-        {step == 2 && (
+        {step === 2 && (
           <Button variant="outline" onClick={() => setStep(1)}>
             Back
           </Button>
         )}
-        {step == 1 ? (
+        {step === 1 ? (
           <Button
             className="mt-10 float-right"
             disabled={!selectedTime || !date}
@@ -229,10 +231,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
             Next
           </Button>
         ) : (
-          <Button
-            disabled={!userEmail || !userName}
-            onClick={handleScheduleEvent}
-          >
+          <Button disabled={!userEmail || !userName} onClick={handleScheduleEvent}>
             {loading ? <LoaderIcon className="animate-spin" /> : "Schedule"}
           </Button>
         )}
@@ -242,3 +241,4 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 }
 
 export default MeetingTimeDateSelection;
+``
