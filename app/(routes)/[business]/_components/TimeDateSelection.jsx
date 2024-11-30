@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import React from 'react';
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import React from "react";
 
 function TimeDateSelection({
   date,
@@ -34,7 +34,7 @@ function TimeDateSelection({
       </div>
       <div
         className="flex flex-col w-full overflow-auto gap-4 p-5"
-        style={{ maxHeight: '400px' }}
+        style={{ maxHeight: "400px" }}
       >
         {timeSlots?.map((time, index) => (
           <Button
@@ -42,7 +42,7 @@ function TimeDateSelection({
             disabled={!enableTimeSlot || checkTimeSlot(time)}
             onClick={() => setSelectedTime(time)}
             className={`border-primary text-primary ${
-              time === selectedTime && 'bg-primary text-white'
+              time === selectedTime && "bg-primary text-white"
             }`}
             variant="outline"
           >

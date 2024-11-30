@@ -3,7 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { app } from "@/config/FirebaseConfig";
-import { useKindeBrowserClient, LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
+import {
+  useKindeBrowserClient,
+  LogoutLink,
+} from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter } from "next/navigation";
 import MeetingEventList from "./meeting-type/_components/MeetingEventList";
 
@@ -33,7 +36,9 @@ function Dashboard() {
       if (docSnap.exists()) {
         console.log("Business exists:", docSnap.data());
       } else {
-        console.log("No such document. Redirecting to business registration...");
+        console.log(
+          "No such document. Redirecting to business registration..."
+        );
         router.replace("/dashboard");
       }
     } catch (error) {
@@ -44,7 +49,9 @@ function Dashboard() {
   };
 
   if (!user) {
-    return <h2>User is not logged in. Please log in to access the dashboard.</h2>;
+    return (
+      <h2>User is not logged in. Please log in to access the dashboard.</h2>
+    );
   }
 
   if (loading) {
