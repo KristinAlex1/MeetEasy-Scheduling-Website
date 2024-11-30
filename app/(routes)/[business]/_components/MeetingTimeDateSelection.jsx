@@ -98,20 +98,20 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 
   const sendEmail = async (user) => {
     try {
-      // Render email HTML
+      // Ensure you correctly import your Email component
       const emailHtml = await render(
         <Email
-          businessName={businessInfo?.businessName}
-          date={format(date, "PPP")}
+          userFirstName={user}
           duration={eventInfo?.duration}
           meetingTime={selectedTime}
+          date={format(date, "PPP")}
           meetingUrl={eventInfo.locationUrl}
-          userFirstName={user}
+          businessName={businessInfo?.businessName}
         />
-      ).toString(); // Convert React component to an HTML string
-
-      console.log("Generated Email HTML:", emailHtml); // Debugging purpose
-
+      ); // Await to resolve the promise into HTML string
+  
+      console.log("Generated Email HTML:", emailHtml); // For debugging
+  
       // Use Plunk API to send the email
       const response = await fetch("https://api.useplunk.com/v1/send", {
         method: "POST",
@@ -122,15 +122,15 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         body: JSON.stringify({
           to: userEmail,
           subject: "Meeting Schedule Details",
-          body: emailHtml, // Pass rendered email HTML
+          body: emailHtml, // Use the rendered email HTML
         }),
       });
-
+  
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to send email");
       }
-
+  
       console.log("Email sent successfully!");
       router.replace("/confirmation");
     } catch (error) {
@@ -138,6 +138,8 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       toast("Failed to send email. Please try again.");
     }
   };
+  
+  
 
   const getPrevEventBooking = async (date_) => {
     const q = query(
