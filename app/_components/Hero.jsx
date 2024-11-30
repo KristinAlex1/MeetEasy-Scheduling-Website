@@ -13,24 +13,24 @@ function Hero() {
     {
       icon: Calendar,
       title: "Create Events",
-      description: "Easily set up and customize your event types",
+      description: "Easily set up and customize your event types.",
     },
     {
       icon: Clock,
       title: "Manage Availability",
-      description: "Define your availability to streamline scheduling",
+      description: "Define your availability to streamline scheduling.",
     },
     {
       icon: LinkIcon,
       title: "Custom Links",
-      description: "Share your personalized scheduling link",
+      description: "Share your personalized scheduling link.",
     },
   ];
 
   return (
-    <main className="container mx-auto px-10 py-5">
+    <main className="container  mx-auto px-10 py-5">
       {/* Hero Section */}
-      <div className="flex flex-col lg:flex-row px-5 items-center justify-between gap-12 mb-10 shadow-bottom-md">
+      <div className="flex flex-col lg:flex-row px-5 mb-100 items-center justify-between gap-12 mb-10 shadow-bottom-md">
         <div className="lg:w-1/2 order-2 lg:order-1">
           <h1 className="text-7xl text-blue-600 font-extrabold px-5 pb-6 gradient-title">
             Scheduling Made Easy
@@ -65,13 +65,9 @@ function Hero() {
           </div>
           <hr />
           <div className="flex justify-center mr-20 mt-3">
-            <LoginLink>
-              <Link className="mr-5 text-primary" href="/signup">
-                {" "}
-                {/* Ensure a valid path */}
-                Sign up with Email
-              </Link>
-            </LoginLink>
+            <Link className="mr-5 text-primary" href="/signup">
+              Sign up with Email
+            </Link>
           </div>
         </div>
         <div className="lg:w-1/2 flex justify-center order-1 lg:order-2">
@@ -86,8 +82,56 @@ function Hero() {
         </div>
       </div>
 
+      {/* Circular Images around the Text */}
+      <div className=" mt-20 relative flex flex-col justify-center items-center my-20">
+        <div className="hidden lg:block">
+          <Image
+            src="/profile1.png"
+            width={100}
+            height={100}
+            className="h-[100px] object-cover rounded-full absolute top-[-50px] left-[10%]"
+            alt="Profile 1"
+          />
+          <Image
+            src="/profile3.png"
+            width={100}
+            height={100}
+            className="h-[100px] object-cover rounded-full absolute top-[-20px] right-[10%]"
+            alt="Profile 3"
+          />
+          <Image
+            src="/profile2.png"
+            width={100}
+            height={100}
+            className="h-[100px] object-cover rounded-full absolute bottom-[-80px] left-[15%]"
+            alt="Profile 2"
+          />
+          <Image
+            src="/profile4.png"
+            width={100}
+            height={100}
+            className="h-[100px] object-cover rounded-full absolute bottom-[-80px] right-[15%]"
+            alt="Profile 4"
+          />
+        </div>
+
+        {/* Text in the Center */}
+        <div className="mb-20 text-center max-w-3xl relative z-10">
+          <h2 className="font-bold text-[60px] text-blue-600">
+            Easy scheduling ahead
+          </h2>
+          <h2 className="text-xl mt-5 text-slate-500">
+            MeetEasy is your scheduling automation platform for eliminating the
+            back-and-forth emails to find the perfect time — and so much more.
+          </h2>
+          <LoginLink>
+            <Button className="mt-10 w-100">Get Started</Button>
+          </LoginLink>
+        </div>
+      </div>
+
       {/* Features Section */}
-      <div className="mb-24">
+      <div className="mb-24 mt-24">
         <h2 className="text-6xl text-center text-blue-600 font-bold px-5 pb-10">
           Key Features
         </h2>

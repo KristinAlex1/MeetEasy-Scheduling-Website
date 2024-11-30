@@ -6,13 +6,20 @@ import {
   RegisterLink,
   LoginLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
+import { useEffect, useState } from "react";
 
 function Header() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Ensures the links render on the client side
+  }, []);
+
   return (
     <div>
       <div className="flex items-center justify-between p-5 shadow-lg">
         <Image
-          src="/logo3.png" // Make sure this image exists in the public folder
+          src="/logo3.png"
           alt="logo"
           width={100}
           height={100}
@@ -33,12 +40,16 @@ function Header() {
           </li>
         </ul>
         <div className="flex gap-5">
-          <LoginLink>
-            <Button variant="ghost">Login</Button>
-          </LoginLink>
-          <RegisterLink>
-            <Button>Get Started</Button>
-          </RegisterLink>
+          {isClient && (
+            <>
+              <LoginLink>
+                <Button variant="ghost">Login</Button>
+              </LoginLink>
+              <RegisterLink>
+                <Button>Get Started</Button>
+              </RegisterLink>
+            </>
+          )}
         </div>
       </div>
     </div>
