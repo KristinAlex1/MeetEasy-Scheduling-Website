@@ -93,7 +93,7 @@ function MeetingEventList() {
   };
 
   /**
-   * Copies the event link to the clipboard.
+   * Opens the event link in a new tab and copies it to the clipboard.
    */
   const onCopyClickHandler = (event) => {
     if (!businessInfo?.businessName || !event?.id) {
@@ -102,6 +102,10 @@ function MeetingEventList() {
     }
 
     const meetingEventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${businessInfo.businessName}/${event.id}`;
+    // Open the URL in a new tab
+    window.open(meetingEventUrl, "_blank");
+
+    // Copy the link to clipboard
     navigator.clipboard
       .writeText(meetingEventUrl)
       .then(() => toast.success("Link copied to clipboard!"))
@@ -155,7 +159,7 @@ function MeetingEventList() {
                 className="flex gap-2 text-sm text-primary items-center cursor-pointer"
                 onClick={() => onCopyClickHandler(event)}
               >
-                <Copy className="h-4 w-4" /> Copy Link
+                <Button> Schedule Time </Button>
               </h2>
               <Button
                 variant="outline"

@@ -4,12 +4,12 @@ import MeetingForm from "./_components/MeetingForm";
 import PreviewMeeting from "./_components/PreviewMeeting";
 
 function CreateMeeting() {
-  const [formValue, setFormValue] = useState(null); // Initialize formValue with null for better type clarity
+  const [formValue, setFormValue] = useState(null); // Initialize formValue with null
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
       {/* Meeting Form */}
-      <div className="shadow-md border h-screen">
+      <div className="shadow-md border h-screen flex flex-col justify-start p-4">
         <MeetingForm setFormValue={setFormValue} />
       </div>
       {/* Preview */}

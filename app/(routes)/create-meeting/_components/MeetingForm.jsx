@@ -1,23 +1,23 @@
 "use client";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
-import React, { useEffect, useState, useCallback } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import LocationOption from "@/app/_utils/LocationOption";
 import Image from "next/image";
 import Link from "next/link";
-import ThemeOptions from "@/app/_utils/ThemeOptions";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { app } from "@/config/FirebaseConfig";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import LocationOption from "@/app/_utils/LocationOption";
+import ThemeOptions from "@/app/_utils/ThemeOptions";
 
 function MeetingForm({ setFormValue }) {
   const [themeColor, setThemeColor] = useState("");
@@ -32,6 +32,15 @@ function MeetingForm({ setFormValue }) {
   const db = getFirestore(app);
   const router = useRouter();
 
+  const validateUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
   const updateFormValue = useCallback(() => {
     if (setFormValue) {
       setFormValue({
@@ -42,14 +51,7 @@ function MeetingForm({ setFormValue }) {
         themeColor,
       });
     }
-  }, [
-    eventName,
-    duration,
-    locationType,
-    locationUrl,
-    themeColor,
-    setFormValue,
-  ]);
+  }, [eventName, duration, locationType, locationUrl, themeColor, setFormValue]);
 
   useEffect(() => {
     updateFormValue();
@@ -61,11 +63,15 @@ function MeetingForm({ setFormValue }) {
       return;
     }
 
+    if (!validateUrl(locationUrl)) {
+      toast.error("Invalid URL format.");
+      return;
+    }
+
     try {
       setLoading(true);
       const id = Date.now().toString();
 
-      // Save the meeting event to Firestore
       await setDoc(doc(db, "MeetingEvent", id), {
         id,
         eventName,
@@ -77,30 +83,19 @@ function MeetingForm({ setFormValue }) {
         createdBy: user?.email,
       });
 
-      // Construct the URL dynamically
       const origin = window.location.origin;
-      const link = `${origin}/${user?.email}/${id}`; // Excludes `/meeting`
-      console.log("Generated Link:", link);
+      const link = `${origin}/${user?.email}/${id}`;
       setGeneratedLink(link);
 
       toast.success("New Meeting Event Created!");
-      router.replace("/dashboard/meeting-type"); // Redirect after creation
+      router.replace("/dashboard/meeting-type");
     } catch (error) {
-      console.error("Error creating meeting event:", error);
+      console.error("Error creating meeting event:", error?.message || error);
       toast.error("Failed to create meeting. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [
-    db,
-    duration,
-    eventName,
-    locationType,
-    locationUrl,
-    themeColor,
-    user,
-    router,
-  ]);
+  }, [db, duration, eventName, locationType, locationUrl, themeColor, user, router]);
 
   const onCopyLink = useCallback(() => {
     if (!generatedLink) {
@@ -110,13 +105,8 @@ function MeetingForm({ setFormValue }) {
 
     navigator.clipboard
       .writeText(generatedLink)
-      .then(() => {
-        console.log("Copied Link:", generatedLink);
-        toast.success("Link copied to clipboard!");
-      })
-      .catch(() => {
-        toast.error("Failed to copy link.");
-      });
+      .then(() => toast.success("Link copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy link."));
   }, [generatedLink]);
 
   return (
@@ -137,13 +127,10 @@ function MeetingForm({ setFormValue }) {
           value={eventName}
           onChange={(event) => setEventName(event.target.value)}
         />
-
         <h2 className="font-bold">Duration *</h2>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="max-w-40">
-              {duration} Min
-            </Button>
+            <Button variant="outline">{duration} Min</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             {[15, 30, 45, 60].map((dur) => (
@@ -153,23 +140,17 @@ function MeetingForm({ setFormValue }) {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-
         <h2 className="font-bold">Location *</h2>
         <div className="grid grid-cols-4 gap-3">
-          {LocationOption?.map((option) => (
+          {LocationOption.map((option) => (
             <div
               key={option.name}
-              className={`border flex flex-col justify-center items-center p-3 rounded-lg cursor-pointer hover:bg-blue-100 hover:border-primary ${
+              className={`border flex flex-col items-center p-3 rounded-lg cursor-pointer hover:bg-blue-100 hover:border-primary ${
                 locationType === option.name && "bg-blue-100 border-primary"
               }`}
               onClick={() => setLocationType(option.name)}
             >
-              <Image
-                src={option.icon}
-                width={30}
-                height={30}
-                alt={option.name}
-              />
+              <Image src={option.icon} width={30} height={30} alt={option.name} />
               <h2>{option.name}</h2>
             </div>
           ))}
@@ -186,10 +167,10 @@ function MeetingForm({ setFormValue }) {
         )}
         <h2 className="font-bold">Select Theme Color</h2>
         <div className="flex justify-evenly">
-          {ThemeOptions?.map((color) => (
+          {ThemeOptions.map((color) => (
             <div
               key={color}
-              className={`h-7 w-7 rounded-full ${
+              className={`h-7 w-7 rounded-full cursor-pointer ${
                 themeColor === color && "border-4 border-black"
               }`}
               style={{ backgroundColor: color }}
@@ -198,17 +179,13 @@ function MeetingForm({ setFormValue }) {
           ))}
         </div>
       </div>
-
       <Button
         className="w-full mt-9"
-        disabled={
-          !eventName || !duration || !locationType || !locationUrl || loading
-        }
+        disabled={!eventName || !duration || !locationType || !locationUrl || loading}
         onClick={onCreateClick}
       >
         {loading ? "Creating..." : "Create"}
       </Button>
-
       {generatedLink && (
         <Button variant="outline" className="w-full mt-3" onClick={onCopyLink}>
           Copy Link

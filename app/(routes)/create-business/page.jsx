@@ -11,24 +11,28 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 
 function CreateBusiness() {
-  const [businessName, setBusinessName] = useState(""); // Controlled input
-  const [loading, setLoading] = useState(false); // Loading state for button
+  const [businessName, setBusinessName] = useState("");
+  const [loading, setLoading] = useState(false);
   const db = getFirestore(app);
   const { user } = useKindeBrowserClient();
   const router = useRouter();
 
-  /**
-   * Helper to construct URLs without "/meeting"
-   */
   const generateBusinessUrl = (businessName, base = "") => {
+    if (typeof window === "undefined") {
+      throw new Error("Cannot generate URL on the server side.");
+    }
+
     const origin = window.location.origin;
-    return `${origin}/${base}/${businessName}`.replace(/\/\//g, "/"); // Remove duplicate slashes
+    const sanitizedName = businessName.replace(/[^a-zA-Z0-9-_]/g, "_");
+    return `${origin}/${base}/${sanitizedName}`;
   };
 
-  /**
-   * Handles the creation of a new business and saves it to Firebase Firestore.
-   */
   const onCreateBusiness = async () => {
+    if (typeof window === "undefined") {
+      toast.error("This action is only available on the client.");
+      return;
+    }
+
     if (!user || !businessName.trim()) {
       toast.error("Please provide all required information.");
       return;
@@ -36,24 +40,17 @@ function CreateBusiness() {
 
     try {
       setLoading(true);
-      console.log(
-        `Creating business for user: ${user.email}, Name: ${businessName}`
-      );
 
-      // Save business details in Firestore
-      const formattedBusinessName = businessName.replace(/\s+/g, "_"); // Replace spaces with underscores
-
+      const formattedBusinessName = businessName.replace(/\s+/g, "_");
       await setDoc(doc(db, "Business", user.email), {
         businessName: formattedBusinessName,
         email: user.email,
         userName: `${user.given_name} ${user.family_name}`,
       });
 
-      console.log("Business successfully created.");
       toast.success("New Business Created!");
-
-      // Navigate to the business dashboard
       const url = generateBusinessUrl(formattedBusinessName, "dashboard");
+      console.log("Generated URL:", url);
       router.replace(url);
     } catch (error) {
       console.error("Error creating business:", error);
@@ -65,7 +62,7 @@ function CreateBusiness() {
 
   return (
     <div className="p-14 items-center flex flex-col gap-20 my-10">
-      <Image src="/logo.svg" width={200} height={200} alt="Business Logo" />
+      <Image src="/logo3.png" width={200} height={200} alt="Business Logo" />
       <div className="flex flex-col items-center gap-4 max-w-3xl">
         <h2 className="text-4xl font-bold">What should we call you?</h2>
         <p className="text-slate-500">
@@ -76,7 +73,7 @@ function CreateBusiness() {
           <Input
             placeholder="Ex. TubeGuruji"
             className="mt-2"
-            value={businessName} // Controlled input
+            value={businessName}
             onChange={(event) =>
               setBusinessName(event.target.value.trimStart())
             }
@@ -84,7 +81,7 @@ function CreateBusiness() {
         </div>
         <Button
           className="w-full"
-          disabled={!businessName.trim() || loading} // Disable button during loading or empty input
+          disabled={!businessName.trim() || loading}
           onClick={onCreateBusiness}
         >
           {loading ? "Creating..." : "Create Business"}

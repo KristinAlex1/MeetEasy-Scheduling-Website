@@ -7,38 +7,30 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 
 function PreviewMeeting({ formValue }) {
   const [date, setDate] = useState(new Date());
-  const [timeSlots, setTimeSlots] = useState([]);
-  const today = useMemo(() => new Date(), []); // Memoized today's date
+  const today = useMemo(() => new Date(), []);
 
-  useEffect(() => {
+  const timeSlots = useMemo(() => {
     if (formValue?.duration) {
-      createTimeSlot(formValue.duration);
+      const startTime = 8 * 60;
+      const endTime = 22 * 60;
+      const interval = formValue.duration;
+      const totalSlots = Math.floor((endTime - startTime) / interval);
+
+      return Array.from({ length: totalSlots }, (_, i) => {
+        const totalMinutes = startTime + i * interval;
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        const formattedHours = hours > 12 ? hours - 12 : hours;
+        const period = hours >= 12 ? "PM" : "AM";
+        return `${String(formattedHours).padStart(2, "0")}:${String(
+          minutes
+        ).padStart(2, "0")} ${period}`;
+      });
     }
-    console.log("Form Value:", formValue); // Debugging
-    console.log("Location URL:", formValue?.locationUrl); // Debugging
-  }, [formValue?.duration, formValue]);
+    return [];
+  }, [formValue?.duration]);
 
-  /**
-   * Creates time slots based on the given interval.
-   */
-  const createTimeSlot = useCallback((interval) => {
-    const startTime = 8 * 60; // 8:00 AM in minutes
-    const endTime = 22 * 60; // 10:00 PM in minutes
-    const totalSlots = (endTime - startTime) / interval;
-
-    const slots = Array.from({ length: totalSlots }, (_, i) => {
-      const totalMinutes = startTime + i * interval;
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      const formattedHours = hours > 12 ? hours - 12 : hours;
-      const period = hours >= 12 ? "PM" : "AM";
-      return `${String(formattedHours).padStart(2, "0")}:${String(
-        minutes
-      ).padStart(2, "0")} ${period}`;
-    });
-
-    setTimeSlots(slots);
-  }, []);
+  const { eventName = "Meeting Name", duration = "N/A", locationType = "N/A", locationUrl = "#" } = formValue || {};
 
   return (
     <div
@@ -52,18 +44,16 @@ function PreviewMeeting({ formValue }) {
         {/* Meeting Info Section */}
         <div className="p-4 border-r">
           <h2>Business Name</h2>
-          <h2 className="font-bold text-3xl">
-            {formValue?.eventName || "Meeting Name"}
-          </h2>
+          <h2 className="font-bold text-3xl">{eventName}</h2>
           <div className="mt-5 flex flex-col gap-4">
             <h2 className="flex gap-2">
-              <Clock /> {formValue?.duration || "N/A"} Min
+              <Clock /> {duration} Min
             </h2>
             <h2 className="flex gap-2">
-              <MapPin /> {formValue?.locationType || "N/A"} Meeting
+              <MapPin /> {locationType} Meeting
             </h2>
-            <Link href={formValue?.locationUrl || "#"} className="text-primary">
-              {formValue?.locationUrl || "No link provided"}
+            <Link href={locationUrl} className="text-primary">
+              {locationUrl}
             </Link>
           </div>
         </div>
@@ -77,7 +67,7 @@ function PreviewMeeting({ formValue }) {
               selected={date}
               onSelect={setDate}
               className="rounded-md border mt-5"
-              disabled={(date) => date <= today}
+              disabled={(date) => new Date(date).setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)}
             />
           </div>
           <div
