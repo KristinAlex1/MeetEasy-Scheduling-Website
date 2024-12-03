@@ -55,7 +55,6 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
       ).padStart(2, "0")} ${period}`;
     });
 
-    console.log("Generated Time Slots:", slots);
     setTimeSlots(slots);
   };
 
@@ -107,7 +106,6 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 
   const sendEmail = async (user) => {
     try {
-      // Ensure you correctly import your Email component
       const emailHtml = await render(
         <Email
           userFirstName={user}
@@ -117,11 +115,8 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
           meetingUrl={eventInfo.locationUrl}
           businessName={businessInfo?.businessName}
         />
-      ); // Await to resolve the promise into HTML string
+      );
 
-      console.log("Generated Email HTML:", emailHtml); // For debugging
-
-      // Use Plunk API to send the email
       const response = await fetch("https://api.useplunk.com/v1/send", {
         method: "POST",
         headers: {
@@ -131,7 +126,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         body: JSON.stringify({
           to: userEmail,
           subject: "Meeting Schedule Details",
-          body: emailHtml, // Use the rendered email HTML
+          body: emailHtml,
         }),
       });
 
@@ -140,7 +135,6 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         throw new Error(error.message || "Failed to send email");
       }
 
-      console.log("Email sent successfully!");
       router.replace("/confirmation");
     } catch (error) {
       console.error("Error sending email:", error.message || error);
@@ -158,52 +152,37 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
-      console.log("--", doc.data());
       setPrevBooking((prev) => [...prev, doc.data()]);
     });
   };
 
   return (
     <div
-      className="p-5 py-10 shadow-lg m-5 border-t-8
-    mx-10
-    md:mx-26
-    lg:mx-56
-    my-10"
+      className="p-5 py-10 shadow-lg m-5 border-t-8 mx-10 md:mx-26 lg:mx-56 my-10"
       style={{ borderTopColor: eventInfo?.themeColor }}
     >
-      <Image src="/logo.svg" alt="logo" width={150} height={150} />
-      <div className="grid grid-cols-1 md:grid-cols-3 mt-5">
+      <Image src="/logo3.png" alt="logo" width={150} height={150} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
         <div className="p-4 border-r">
-          <h2>{businessInfo?.businessName}</h2>
-          <h2 className="font-bold text-3xl">
-            {eventInfo?.eventName ? eventInfo?.eventName : "Meeting Name"}
-          </h2>
-          <div className="mt-5 flex flex-col gap-4">
-            <h2 className="flex gap-2">
-              <Clock />
-              {eventInfo?.duration} Min{" "}
-            </h2>
-            <h2 className="flex gap-2">
-              <MapPin />
-              {eventInfo?.locationType} Meeting{" "}
-            </h2>
-            <h2 className="flex gap-2">
-              <CalendarCheck />
-              {format(date, "PPP")}{" "}
-            </h2>
+          <h2 className="text-xl font-semibold">{businessInfo?.businessName}</h2>
+          <h2 className="font-bold text-2xl">{eventInfo?.eventName || "Meeting Name"}</h2>
+          <div className="mt-5 space-y-4">
+            <h3 className="flex items-center gap-2">
+              <Clock className="text-primary" /> {eventInfo?.duration} Min
+            </h3>
+            <h3 className="flex items-center gap-2">
+              <MapPin className="text-primary" /> {eventInfo?.locationType} Meeting
+            </h3>
+            <h3 className="flex items-center gap-2">
+              <CalendarCheck className="text-primary" /> {format(date, "PPP")}
+            </h3>
             {selectedTime && (
-              <h2 className="flex gap-2">
-                <Timer />
-                {selectedTime}{" "}
-              </h2>
+              <h3 className="flex items-center gap-2">
+                <Timer className="text-primary" /> {selectedTime}
+              </h3>
             )}
-
-            <Link
-              href={eventInfo?.locationUrl ? eventInfo?.locationUrl : "#"}
-              className="text-primary"
-            >
-              {eventInfo?.locationUrl}
+            <Link href={eventInfo?.locationUrl || "#"} className="text-primary">
+              {eventInfo?.locationUrl || "Location URL"}
             </Link>
           </div>
         </div>
@@ -225,15 +204,15 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
           />
         )}
       </div>
-      <div className="flex gap-3 justify-end">
+      <div className="flex gap-3 justify-end mt-5">
         {step === 2 && (
-          <Button variant="outline" onClick={() => setStep(1)}>
+          <Button variant="outline" onClick={() => setStep(1)} className="py-2">
             Back
           </Button>
         )}
         {step === 1 ? (
           <Button
-            className="mt-10 float-right"
+            className="mt-10"
             disabled={!selectedTime || !date}
             onClick={() => setStep(step + 1)}
           >
@@ -243,8 +222,9 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
           <Button
             disabled={!userEmail || !userName}
             onClick={handleScheduleEvent}
+            className="mt-10"
           >
-            {loading ? <LoaderIcon className="animate-spin" /> : "Schedule"}
+            {loading ? <LoaderIcon className="animate-spin" /> : "Schedule Event"}
           </Button>
         )}
       </div>
@@ -253,4 +233,3 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
 }
 
 export default MeetingTimeDateSelection;
-``;

@@ -4,74 +4,82 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 function AboutUs() {
   return (
-    <main className="bg-gray-50 min-h-screen flex items-center justify-center px-6">
-      <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl w-full">
+    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <section className="max-w-3xl w-full bg-white shadow-md rounded-lg overflow-hidden">
         {/* Header Section */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">About Me</h1>
-          <p className="text-gray-600">
-            Hello! I’m <span className="font-semibold">Kristin Alex</span>, a
-            passionate software developer with a focus on building innovative,
-            user-friendly solutions. I thrive on tackling challenging problems
-            and turning ideas into functional, efficient code.
-          </p>
-        </div>
+        <header className="bg-blue-600 text-white p-6">
+          <h1 className="text-3xl font-extrabold text-center">About Me</h1>
+        </header>
 
-        {/* Details Section */}
-        <div className="space-y-6">
-          {/* My Journey */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+        {/* Content Section */}
+        <div className="p-6 space-y-8">
+          {/* Introduction */}
+          <article>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Hello, I'm Kristin Alex
+            </h2>
+            <p className="text-gray-700">
+              I’m a dedicated software developer with a passion for crafting
+              efficient, user-focused solutions. Whether it’s designing
+              web-based platforms or working on challenging coding projects, my
+              goal is to make technology more accessible and impactful.
+            </p>
+          </article>
+
+          {/* My Background */}
+          <article>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
               My Journey
             </h2>
-            <p className="text-gray-600">
-              My journey into technology started with curiosity. Over the years, I’ve honed my skills in
-              web development, problem-solving, and collaborative project work,
-              always striving for excellence.
+            <p className="text-gray-700">
+              Starting from my first line of code to contributing to diverse
+              projects, I’ve embraced every opportunity to grow as a developer.
+              My technical expertise spans full-stack development, and I love
+              working on both collaborative and individual projects.
             </p>
-          </div>
+          </article>
 
-          {/* Values */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              My Values
+          {/* Values Section */}
+          <article>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              What Drives Me
             </h2>
-            <p className="text-gray-600">
-              I believe in the power of collaboration, continuous learning, and
-              using technology as a tool for positive change. Whether it’s
-              contributing to open-source projects or collaborating on team
-              efforts, I’m dedicated to making an impact.
+            <p className="text-gray-700">
+              I strongly believe in continuous improvement, innovation, and
+              fostering meaningful connections through technology. I aim to
+              create solutions that not only work seamlessly but also make a
+              positive difference.
             </p>
-          </div>
+          </article>
 
-          {/* Links */}
+          {/* Social Links */}
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Connect With Me
-            </h2>
-            <div className="flex justify-center gap-6">
-              {/* GitHub */}
+            <h3 className="text-lg font-bold text-gray-800 mb-4">
+              Let’s Connect
+            </h3>
+            <div className="flex justify-center gap-8">
               <a
                 href="https://github.com/KristinAlex1"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 hover:text-black transition"
+                aria-label="GitHub Profile"
+                className="text-gray-600 hover:text-gray-900 transition-all"
               >
-                <FaGithub size={40} />
+                <FaGithub size={36} />
               </a>
-              {/* LinkedIn */}
               <a
                 href="https://www.linkedin.com/in/kristin-alex-740a72153/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600 transition"
+                aria-label="LinkedIn Profile"
+                className="text-gray-600 hover:text-blue-500 transition-all"
               >
-                <FaLinkedin size={40} />
+                <FaLinkedin size={36} />
               </a>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 }

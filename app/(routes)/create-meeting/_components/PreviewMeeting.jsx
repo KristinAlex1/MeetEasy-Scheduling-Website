@@ -1,94 +1,63 @@
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React from "react";
 
 function PreviewMeeting({ formValue }) {
-  const [date, setDate] = useState(new Date());
-  const today = useMemo(() => new Date(), []);
-
-  const timeSlots = useMemo(() => {
-    if (formValue?.duration) {
-      const startTime = 8 * 60;
-      const endTime = 22 * 60;
-      const interval = formValue.duration;
-      const totalSlots = Math.floor((endTime - startTime) / interval);
-
-      return Array.from({ length: totalSlots }, (_, i) => {
-        const totalMinutes = startTime + i * interval;
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-        const formattedHours = hours > 12 ? hours - 12 : hours;
-        const period = hours >= 12 ? "PM" : "AM";
-        return `${String(formattedHours).padStart(2, "0")}:${String(
-          minutes
-        ).padStart(2, "0")} ${period}`;
-      });
-    }
-    return [];
-  }, [formValue?.duration]);
-
-  const { eventName = "Meeting Name", duration = "N/A", locationType = "N/A", locationUrl = "#" } = formValue || {};
+  const {
+    eventName = "Meeting Name",
+    duration = "N/A",
+    locationType = "N/A",
+    locationUrl = "#",
+    themeColor = "#4CAF50", // Default theme color
+    businessName = "Business Name",
+  } = formValue || {};
 
   return (
     <div
-      className="p-5 py-10 shadow-lg m-5 border-t-8"
-      style={{ borderTopColor: formValue?.themeColor || "#000" }}
+      className="p-8 py-12 shadow-xl m-5 border-t-8 rounded-lg bg-white"
+      style={{ borderTopColor: themeColor }}
     >
-      {/* Logo */}
-      <Image src="/logo3.png" alt="logo" width={200} height={200} />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 mt-5">
-        {/* Meeting Info Section */}
-        <div className="p-4 border-r">
-          <h2>Business Name</h2>
-          <h2 className="font-bold text-3xl">{eventName}</h2>
-          <div className="mt-5 flex flex-col gap-4">
-            <h2 className="flex gap-2">
-              <Clock /> {duration} Min
-            </h2>
-            <h2 className="flex gap-2">
-              <MapPin /> {locationType} Meeting
-            </h2>
-            <Link href={locationUrl} className="text-primary">
-              {locationUrl}
-            </Link>
-          </div>
+      {/* Header Section */}
+      <div className="flex justify-between items-center">
+        <div className="text-left">
+          <h1 className="text-2xl font-extrabold text-gray-800">
+            Meeting Preview
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Organize your meetings with ease and professionalism.
+          </p>
         </div>
+        <Image src="/logo3.png" alt="logo" width={100} height={100} />
+      </div>
 
-        {/* Time and Date Selection */}
-        <div className="md:col-span-2 flex px-4">
-          <div className="flex flex-col">
-            <h2 className="font-bold text-lg">Select Date & Time</h2>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border mt-5"
-              disabled={(date) => new Date(date).setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)}
-            />
+      {/* Divider */}
+      <hr className="my-6 border-gray-300" />
+
+      {/* Meeting Details Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+        {/* Left Side: Meeting Info */}
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl font-bold text-gray-800">{eventName}</h2>
+          <div className="flex gap-2 items-center text-gray-600">
+            <Clock className="text-gray-500" />
+            <span>{duration} Min</span>
           </div>
-          <div
-            className="flex flex-col w-full overflow-auto gap-4 p-5"
-            style={{ maxHeight: "400px" }}
+          <div className="flex gap-2 items-center text-gray-600">
+            <MapPin className="text-gray-500" />
+            <span>{locationType} Meeting</span>
+          </div>
+          <Link
+            href={locationUrl}
+            target="_blank"
+            className="text-primary font-semibold hover:underline"
           >
-            {timeSlots.length > 0 ? (
-              timeSlots.map((time) => (
-                <Button
-                  key={time}
-                  className="border-primary text-primary"
-                  variant="outline"
-                >
-                  {time}
-                </Button>
-              ))
-            ) : (
-              <p>No time slots available.</p>
-            )}
-          </div>
+            {locationUrl}
+          </Link>
         </div>
+
+        
+        
       </div>
     </div>
   );

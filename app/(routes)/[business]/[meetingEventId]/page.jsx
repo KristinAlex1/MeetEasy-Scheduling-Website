@@ -33,11 +33,12 @@ function SharedMeetingEvent({ params: paramsPromise }) {
   }, [params]);
 
   /**
-   * Used to get Business Info and Event Details for Given Login User/Business Owner
+   * Fetches business information and event details for the specified business owner and event.
    */
   const getMeetingBusinessAndEventDetails = async () => {
     setLoading(true);
     try {
+      // Query to get business info based on the business name
       const q = query(
         collection(db, "Business"),
         where("businessName", "==", params.business)
@@ -48,6 +49,7 @@ function SharedMeetingEvent({ params: paramsPromise }) {
         setBusinessInfo(doc.data());
       });
 
+      // Fetch event details based on the meeting event ID
       const docRef = doc(db, "MeetingEvent", params?.meetingEventId);
       const result = await getDoc(docRef);
       setEventInfo(result.data());
@@ -59,11 +61,17 @@ function SharedMeetingEvent({ params: paramsPromise }) {
   };
 
   return (
-    <div>
-      <MeetingTimeDateSelection
-        eventInfo={eventInfo}
-        businessInfo={businessInfo}
-      />
+    <div className="p-6 bg-gray-50 rounded-md shadow-md">
+      {loading ? (
+        <div className="flex justify-center items-center">
+          <span className="text-xl text-blue-600">Loading...</span>
+        </div>
+      ) : (
+        <MeetingTimeDateSelection
+          eventInfo={eventInfo}
+          businessInfo={businessInfo}
+        />
+      )}
     </div>
   );
 }

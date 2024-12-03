@@ -1,1 +1,1 @@
-export default ["#4F75FE", "#13C38B", "#9F3CFE", "#FF555D", "#FF7D4F"];
+export default ["#FF6B6B", "#6BFFB3", "#FF8C00", "#4D8CFF", "#9B59B6"];

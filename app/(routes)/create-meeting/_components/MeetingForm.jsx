@@ -3,12 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
@@ -110,84 +105,109 @@ function MeetingForm({ setFormValue }) {
   }, [generatedLink]);
 
   return (
-    <div className="p-5">
-      <Link href={"/dashboard"}>
-        <h2 className="flex gap-2">
-          <ChevronLeft /> Cancel
-        </h2>
+    <div className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
+      <Link href={"/dashboard"} className="flex gap-2 text-primary hover:text-primary-dark mb-6">
+        <ChevronLeft size={20} />
+        <span className="text-lg font-semibold">Cancel</span>
       </Link>
-      <div className="mt-4">
-        <h2 className="font-bold text-2xl my-4">Create New Event</h2>
-        <hr />
-      </div>
-      <div className="flex flex-col gap-3 my-4">
-        <h2 className="font-bold">Event Name *</h2>
-        <Input
-          placeholder="Name of your meeting event"
-          value={eventName}
-          onChange={(event) => setEventName(event.target.value)}
-        />
-        <h2 className="font-bold">Duration *</h2>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{duration} Min</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {[15, 30, 45, 60].map((dur) => (
-              <DropdownMenuItem key={dur} onClick={() => setDuration(dur)}>
-                {dur} Min
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <h2 className="font-bold">Location *</h2>
-        <div className="grid grid-cols-4 gap-3">
-          {LocationOption.map((option) => (
-            <div
-              key={option.name}
-              className={`border flex flex-col items-center p-3 rounded-lg cursor-pointer hover:bg-blue-100 hover:border-primary ${
-                locationType === option.name && "bg-blue-100 border-primary"
-              }`}
-              onClick={() => setLocationType(option.name)}
-            >
-              <Image src={option.icon} width={30} height={30} alt={option.name} />
-              <h2>{option.name}</h2>
-            </div>
-          ))}
+
+      <h2 className="text-3xl font-semibold text-center mb-6">Create New Event</h2>
+      <hr className="mb-6" />
+
+      <div className="space-y-6">
+        {/* Event Name */}
+        <div>
+          <label className="block text-lg font-semibold mb-2">Event Name *</label>
+          <Input
+            placeholder="Name of your meeting event"
+            value={eventName}
+            onChange={(event) => setEventName(event.target.value)}
+            className="px-4 py-3 rounded-lg border border-gray-300 w-full focus:ring-2 focus:ring-primary"
+          />
         </div>
+
+        {/* Duration */}
+        <div>
+          <label className="block text-lg font-semibold mb-2">Duration *</label>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full py-3 text-lg">{duration} Min</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full">
+              {[15, 30, 45, 60].map((dur) => (
+                <DropdownMenuItem key={dur} onClick={() => setDuration(dur)} className="hover:bg-gray-100 px-4 py-2">
+                  {dur} Min
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className="block text-lg font-semibold mb-2">Location *</label>
+          <div className="grid grid-cols-4 gap-4">
+            {LocationOption.map((option) => (
+              <div
+                key={option.name}
+                className={`border flex flex-col items-center p-4 rounded-lg cursor-pointer transition-all hover:bg-primary-light ${
+                  locationType === option.name && "bg-primary-light border-primary"
+                }`}
+                onClick={() => setLocationType(option.name)}
+              >
+                <Image src={option.icon} width={30} height={30} alt={option.name} />
+                <span className="mt-2">{option.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {locationType && (
-          <>
-            <h2 className="font-bold">Add {locationType} Url *</h2>
+          <div>
+            <label className="block text-lg font-semibold mb-2">Add {locationType} URL *</label>
             <Input
-              placeholder="Add Url"
+              placeholder="Add URL"
               value={locationUrl}
               onChange={(event) => setLocationUrl(event.target.value)}
+              className="px-4 py-3 rounded-lg border border-gray-300 w-full focus:ring-2 focus:ring-primary"
             />
-          </>
+          </div>
         )}
-        <h2 className="font-bold">Select Theme Color</h2>
-        <div className="flex justify-evenly">
-          {ThemeOptions.map((color) => (
-            <div
-              key={color}
-              className={`h-7 w-7 rounded-full cursor-pointer ${
-                themeColor === color && "border-4 border-black"
-              }`}
-              style={{ backgroundColor: color }}
-              onClick={() => setThemeColor(color)}
-            ></div>
-          ))}
+
+        {/* Theme Color */}
+        <div>
+          <label className="block text-lg font-semibold mb-2">Select Theme Color</label>
+          <div className="flex justify-evenly">
+            {ThemeOptions.map((color) => (
+              <div
+                key={color}
+                className={`h-8 w-8 rounded-full cursor-pointer transition-all ${
+                  themeColor === color ? "border-4 border-black" : ""
+                }`}
+                style={{ backgroundColor: color }}
+                onClick={() => setThemeColor(color)}
+              />
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Submit Button */}
       <Button
-        className="w-full mt-9"
+        className="w-full mt-8 py-3 text-lg font-semibold"
         disabled={!eventName || !duration || !locationType || !locationUrl || loading}
         onClick={onCreateClick}
       >
-        {loading ? "Creating..." : "Create"}
+        {loading ? "Creating..." : "Create Event"}
       </Button>
+
+      {/* Copy Link Button */}
       {generatedLink && (
-        <Button variant="outline" className="w-full mt-3" onClick={onCopyLink}>
+        <Button
+          variant="outline"
+          className="w-full mt-4 py-3 text-lg"
+          onClick={onCopyLink}
+        >
           Copy Link
         </Button>
       )}
