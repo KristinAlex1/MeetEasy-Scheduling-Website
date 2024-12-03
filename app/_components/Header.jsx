@@ -29,13 +29,11 @@ function Header() {
           <a href="/product" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
             Product
           </a>
-          <a href="/pricing" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
-            Pricing
-          </a>
-          <a href="/contact" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
+          
+          <a href="/contact-us" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
             Contact Us
           </a>
-          <a href="/about" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
+          <a href="/about-us" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
             About Us
           </a>
         </nav>
@@ -65,13 +63,11 @@ function Header() {
           <a href="/product" className="hover:underline">
             Product
           </a>
-          <a href="/pricing" className="hover:underline">
-            Pricing
-          </a>
-          <a href="/contact" className="hover:underline">
+          
+          <a href="/contact-us" className="hover:underline">
             Contact Us
           </a>
-          <a href="/about" className="hover:underline">
+          <a href="/about-us" className="hover:underline">
             About Us
           </a>
         </nav>
