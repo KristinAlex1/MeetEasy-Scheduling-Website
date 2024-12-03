@@ -13,7 +13,7 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import { Clock, Copy, MapPin, Pen, Settings, Trash } from "lucide-react";
+import { Clock, MapPin, Pen, Settings, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -37,9 +37,6 @@ function MeetingEventList() {
     }
   }, [user]);
 
-  /**
-   * Fetches the list of events created by the user.
-   */
   const getEventList = async () => {
     try {
       setLoading(true);
@@ -60,9 +57,6 @@ function MeetingEventList() {
     }
   };
 
-  /**
-   * Fetches business information for the current user.
-   */
   const fetchBusinessInfo = async () => {
     try {
       const docRef = doc(db, "Business", user.email);
@@ -78,23 +72,17 @@ function MeetingEventList() {
     }
   };
 
-  /**
-   * Deletes a meeting event.
-   */
   const onDeleteMeetingEvent = async (event) => {
     try {
       await deleteDoc(doc(db, "MeetingEvent", event?.id));
       toast.success("Meeting Event Deleted!");
-      getEventList(); // Refresh the list
+      getEventList();
     } catch (error) {
       console.error("Error deleting event:", error);
       toast.error("Failed to delete event.");
     }
   };
 
-  /**
-   * Opens the event link in a new tab and copies it to the clipboard.
-   */
   const onCopyClickHandler = (event) => {
     if (!businessInfo?.businessName || !event?.id) {
       toast.error("Missing business or event information.");
@@ -102,10 +90,8 @@ function MeetingEventList() {
     }
 
     const meetingEventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${businessInfo.businessName}/${event.id}`;
-    // Open the URL in a new tab
     window.open(meetingEventUrl, "_blank");
 
-    // Copy the link to clipboard
     navigator.clipboard
       .writeText(meetingEventUrl)
       .then(() => toast.success("Link copied to clipboard!"))
@@ -116,63 +102,70 @@ function MeetingEventList() {
   };
 
   return (
-    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-      {loading ? (
-        <h2>Loading...</h2>
-      ) : eventList.length > 0 ? (
-        eventList.map((event, index) => (
-          <div
-            key={event.id}
-            className="border shadow-md border-t-8 rounded-lg p-5 flex flex-col gap-3"
-            style={{ borderTopColor: event?.themeColor || "#000" }}
-          >
-            <div className="flex justify-end">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Settings className="cursor-pointer" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem className="flex gap-2">
-                    <Pen /> Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex gap-2"
-                    onClick={() => onDeleteMeetingEvent(event)}
-                  >
-                    <Trash /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+    <div className="mt-10">
+      <h1 className="text-center text-3xl font-bold mb-8 text-gray-800">
+        Meeting Event List
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+        {loading ? (
+          <h2 className="text-center text-lg text-gray-600">Loading...</h2>
+        ) : eventList.length > 0 ? (
+          eventList.map((event) => (
+            <div
+              key={event.id}
+              className="border shadow-lg border-t-8 rounded-lg p-6 bg-white hover:shadow-2xl transition-all duration-300"
+              style={{ borderTopColor: event?.themeColor || "#000" }}
+            >
+              <div className="flex justify-between items-center">
+                <h2 className="font-semibold text-xl text-center flex-grow">
+                  {event?.eventName}
+                </h2>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Settings className="cursor-pointer hover:text-gray-700 transition duration-200" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="flex gap-2">
+                      <Pen /> Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="flex gap-2"
+                      onClick={() => onDeleteMeetingEvent(event)}
+                    >
+                      <Trash /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="flex justify-between text-gray-600 mt-4">
+                <span className="flex gap-2 items-center">
+                  <Clock /> {event.duration} Min
+                </span>
+                <span className="flex gap-2 items-center">
+                  <MapPin /> {event.locationType}
+                </span>
+              </div>
+              <hr className="my-4" />
+              <div className="flex justify-between items-center mt-4">
+                <Button
+                  onClick={() => onCopyClickHandler(event)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
+                >
+                  Schedule Time
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-lg border-primary text-primary px-4 py-2 hover:bg-gray-100"
+                >
+                  Share
+                </Button>
+              </div>
             </div>
-            <h2 className="font-medium text-xl">{event?.eventName}</h2>
-            <div className="flex justify-between">
-              <h2 className="flex gap-2 text-gray-500">
-                <Clock /> {event.duration} Min
-              </h2>
-              <h2 className="flex gap-2 text-gray-500">
-                <MapPin /> {event.locationType}
-              </h2>
-            </div>
-            <hr />
-            <div className="flex justify-between">
-              <h2
-                className="flex gap-2 text-sm text-primary items-center cursor-pointer"
-                onClick={() => onCopyClickHandler(event)}
-              >
-                <Button> Schedule Time </Button>
-              </h2>
-              <Button
-                variant="outline"
-                className="rounded-full text-primary border-primary"
-              >
-                Share
-              </Button>
-            </div>
-          </div>
-        ))
-      ) : (
-        <h2>No events found.</h2>
-      )}
+          ))
+        ) : (
+          <h2 className="text-center text-lg text-gray-600">No events found.</h2>
+        )}
+      </div>
     </div>
   );
 }

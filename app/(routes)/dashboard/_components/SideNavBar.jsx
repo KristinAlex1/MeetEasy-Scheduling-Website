@@ -45,28 +45,43 @@ const SideNavBar = () => {
   }, [path]);
 
   return (
-    <div className="p-5 py-15">
-      <div className="flex justify-center">
-        <Image src="/logo3.png" alt="logo" width={220} height={220} />
+    <div className="p-6 bg-white shadow-md h-full rounded-lg">
+      {/* Logo */}
+      <div className="flex justify-center mb-10">
+        <Image
+          src="/logo3.png"
+          alt="logo"
+          width={120}
+          height={120}
+          className="rounded-full shadow-lg"
+        />
       </div>
 
+      {/* Create Button */}
       <Link href="/create-meeting">
-        <Button className="flex gap-2 w-full mt-7 rounded-full">
-          <Plus />
-          Create
+        <Button className="flex gap-3 w-full mb-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200">
+          <Plus className="h-5 w-5" />
+          Create Meeting
         </Button>
       </Link>
 
-      <div className="mt-5 flex flex-col gap-5">
+      {/* Menu Items */}
+      <div className="flex flex-col gap-3">
         {menu.map((item) => (
           <Link href={item.path} key={item.id}>
             <Button
-              className={`flex gap-2 justify-start w-full rounded-full hover:bg-blue-100 ${
-                activePath === item.path ? "text-primary bg-blue-100" : ""
+              className={`flex items-center gap-3 w-full py-3 px-4 rounded-lg text-left transition-all duration-200 ${
+                activePath === item.path
+                  ? "bg-blue-100 text-blue-700 shadow-sm"
+                  : "text-gray-700 hover:bg-gray-100"
               }`}
               variant="ghost"
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon
+                className={`h-5 w-5 ${
+                  activePath === item.path ? "text-blue-700" : "text-gray-500"
+                }`}
+              />
               {item.name}
             </Button>
           </Link>

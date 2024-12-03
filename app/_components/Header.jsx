@@ -2,10 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  RegisterLink,
-  LoginLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
+import { RegisterLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useEffect, useState } from "react";
 
 function Header() {
@@ -16,43 +13,82 @@ function Header() {
   }, []);
 
   return (
-    <div>
-      <div className="flex items-center justify-between p-5 shadow-lg">
+    <header className="bg-white shadow-md">
+      <div className="container mx-auto flex items-center justify-between py-5 px-6 md:px-10">
+        {/* Logo */}
         <Image
           src="/logo3.png"
           alt="logo"
-          width={100}
-          height={100}
-          className="w-[180px] md:w-[180px]"
+          width={150}
+          height={150}
+          className="w-[150px] h-auto"
         />
-        <ul className="hidden md:flex gap-14 font-medium text-lg">
-          <li className="hover:text-primary transition-all duration-300 cursor-pointer">
+
+        {/* Navigation Links */}
+        <nav className="hidden md:flex items-center gap-10 text-lg font-medium">
+          <a
+            href="#product"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             Product
-          </li>
-          <li className="hover:text-primary transition-all duration-300 cursor-pointer">
+          </a>
+          <a
+            href="#pricing"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             Pricing
-          </li>
-          <li className="hover:text-primary transition-all duration-300 cursor-pointer">
+          </a>
+          <a
+            href="#contact"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             Contact Us
-          </li>
-          <li className="hover:text-primary transition-all duration-300 cursor-pointer">
+          </a>
+          <a
+            href="#about"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             About Us
-          </li>
-        </ul>
-        <div className="flex gap-5">
+          </a>
+        </nav>
+
+        {/* Authentication Buttons */}
+        <div className="flex gap-4">
           {isClient && (
             <>
               <LoginLink>
-                <Button variant="ghost">Login</Button>
+                <Button variant="ghost" className="px-5 py-2 text-blue-600 hover:bg-blue-100">
+                  Login
+                </Button>
               </LoginLink>
               <RegisterLink>
-                <Button>Get Started</Button>
+                <Button className="px-5 py-2 bg-blue-600 text-white hover:bg-blue-700">
+                  Get Started
+                </Button>
               </RegisterLink>
             </>
           )}
         </div>
       </div>
-    </div>
+
+      {/* Mobile Navigation */}
+      <div className="block md:hidden bg-blue-600 text-white py-3 text-center font-medium text-lg">
+        <nav className="flex justify-around">
+          <a href="#product" className="hover:underline">
+            Product
+          </a>
+          <a href="#pricing" className="hover:underline">
+            Pricing
+          </a>
+          <a href="#contact" className="hover:underline">
+            Contact Us
+          </a>
+          <a href="#about" className="hover:underline">
+            About Us
+          </a>
+        </nav>
+      </div>
+    </header>
   );
 }
 

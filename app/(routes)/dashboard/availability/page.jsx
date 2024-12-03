@@ -5,13 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  collection,
-  doc,
-  getDoc,
-  getFirestore,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { app } from "@/config/FirebaseConfig";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { toast } from "sonner";
@@ -32,46 +26,41 @@ function Availability() {
   const { user } = useKindeBrowserClient();
 
   useEffect(() => {
-    if (user) {
-      getBusinessInfo();
-    }
-  }, [user]);
+    const fetchBusinessInfo = async () => {
+      if (user) {
+        try {
+          const docRef = doc(db, "Business", user.email);
+          const docSnap = await getDoc(docRef);
 
-  const getBusinessInfo = async () => {
-    try {
-      const docRef = doc(db, "Business", user.email);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const result = docSnap.data();
-        setDaysAvailable(result.daysAvailable || {});
-        setStartTime(result.startTime || "");
-        setEndTime(result.endTime || "");
-      } else {
-        console.error("No such document!");
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setDaysAvailable(data.daysAvailable || {});
+            setStartTime(data.startTime || "");
+            setEndTime(data.endTime || "");
+          }
+        } catch (error) {
+          console.error("Error fetching business info:", error);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching business info:", error);
-    }
-  };
+    };
 
-  const onHandleChange = (day, value) => {
+    fetchBusinessInfo();
+  }, [user, db]);
+
+  const handleDayChange = (day, value) => {
     setDaysAvailable((prev) => ({
       ...prev,
       [day]: value,
     }));
-    console.log("Updated Days Available:", daysAvailable);
   };
 
   const handleSave = async () => {
+    if (!user) return;
+
     try {
-      console.log(daysAvailable, startTime, endTime);
-      const docRef = doc(db, "Business", user?.email);
-      await updateDoc(docRef, {
-        daysAvailable,
-        startTime,
-        endTime,
-      });
-      toast.success("Changes updated successfully!");
+      const docRef = doc(db, "Business", user.email);
+      await updateDoc(docRef, { daysAvailable, startTime, endTime });
+      toast.success("Availability updated successfully!");
     } catch (error) {
       console.error("Error updating availability:", error);
       toast.error("Failed to update availability.");
@@ -79,57 +68,70 @@ function Availability() {
   };
 
   return (
-    <div className="p-10 bg-white shadow-md rounded-lg">
-      <h2 className="font-bold text-3xl text-blue-600 mb-5">Availability</h2>
-      <hr className="mb-7 border-gray-300" />
+    <div className="p-8 bg-white shadow rounded-lg max-w-4xl mx-auto">
+      <h2 className="text-center text-3xl font-bold text-blue-600 mb-6">
+        Availability
+      </h2>
+      <hr className="border-gray-300 mb-8" />
 
-      {/* Days Availability Section */}
-      <div>
-        <h2 className="font-semibold text-lg mb-3">Available Days</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+      <section>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Available Days
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {DaysList.map((item, index) => (
-            <div key={index} className="flex items-center gap-3">
+            <div
+              key={index}
+              className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:shadow transition"
+            >
               <Checkbox
                 checked={daysAvailable[item.day] || false}
-                onCheckedChange={(e) => onHandleChange(item.day, e)}
+                onCheckedChange={(e) => handleDayChange(item.day, e)}
               />
-              <span className="text-gray-700">{item.day}</span>
+              <label className="text-gray-700">{item.day}</label>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Time Availability Section */}
-      <div className="mt-10">
-        <h2 className="font-semibold text-lg mb-3">Available Times</h2>
-        <div className="flex flex-col md:flex-row gap-10">
+      <section className="mt-8">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Available Times
+        </h3>
+        <div className="flex flex-col md:flex-row gap-8">
           <div>
-            <h3 className="font-medium mb-2">Start Time</h3>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Start Time
+            </label>
             <Input
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="border rounded-lg p-2"
+              className="border-gray-300 rounded w-full shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <h3 className="font-medium mb-2">End Time</h3>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              End Time
+            </label>
             <Input
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="border rounded-lg p-2"
+              className="border-gray-300 rounded w-full shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
-      </div>
+      </section>
 
-      <Button
-        onClick={handleSave}
-        className="mt-10 bg-blue-600 text-white font-semibold hover:bg-blue-700"
-      >
-        Save
-      </Button>
+      <div className="mt-10 text-center">
+        <Button
+          onClick={handleSave}
+          className="px-6 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 focus:outline-none"
+        >
+          Save
+        </Button>
+      </div>
     </div>
   );
 }
