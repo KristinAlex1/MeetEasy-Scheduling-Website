@@ -14,7 +14,7 @@ function UserFormInfo({ setUserName, setUserEmail, setUserNote }) {
         <Input
           id="name"
           onChange={(event) => setUserName(event.target.value)}
-          placeholder="Enter your name"
+          placeholder="Enter recievers name"
           className="border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary p-3 rounded-md"
         />
       </div>
@@ -27,7 +27,7 @@ function UserFormInfo({ setUserName, setUserEmail, setUserNote }) {
         <Input
           id="email"
           onChange={(event) => setUserEmail(event.target.value)}
-          placeholder="Enter your email"
+          placeholder="Enter recievers email"
           className="border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary p-3 rounded-md"
         />
       </div>

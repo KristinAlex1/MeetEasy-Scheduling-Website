@@ -17,7 +17,7 @@ function Header() {
       <div className="container mx-auto flex items-center justify-between py-5 px-6 md:px-10">
         {/* Logo */}
         <Image
-          src="/logo3.png" // Ensure the file exists in the public folder
+          src="/logo3.png"
           alt="logo"
           width={150}
           height={150}
@@ -26,14 +26,28 @@ function Header() {
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-10 text-lg font-medium">
-          <a href="/product" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
+          <a
+            href="/product"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             Product
           </a>
-          
-          <a href="/contact-us" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
+          <a
+            href="#pricing"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
+            Pricing
+          </a>
+          <a
+            href="#contact"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             Contact Us
           </a>
-          <a href="/about-us" className="text-gray-800 hover:text-blue-600 transition-colors duration-300">
+          <a
+            href="#about"
+            className="text-gray-800 hover:text-blue-600 transition-colors duration-300"
+          >
             About Us
           </a>
         </nav>
@@ -60,14 +74,16 @@ function Header() {
       {/* Mobile Navigation */}
       <div className="block md:hidden bg-blue-600 text-white py-3 text-center font-medium text-lg">
         <nav className="flex justify-around">
-          <a href="/product" className="hover:underline">
+          <a href="#product" className="hover:underline">
             Product
           </a>
-          
-          <a href="/contact-us" className="hover:underline">
+          <a href="#pricing" className="hover:underline">
+            Pricing
+          </a>
+          <a href="#contact" className="hover:underline">
             Contact Us
           </a>
-          <a href="/about-us" className="hover:underline">
+          <a href="#about" className="hover:underline">
             About Us
           </a>
         </nav>

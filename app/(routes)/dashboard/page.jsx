@@ -21,6 +21,8 @@ function Dashboard() {
     if (user) {
       console.log("useEffect triggered with user:", user);
       isBusinessRegistered();
+    } else {
+      console.warn("No user detected; ensure authentication is working.");
     }
   }, [user]);
 
@@ -43,7 +45,7 @@ function Dashboard() {
         router.replace("/dashboard");
       }
     } catch (error) {
-      console.error("Error checking business registration:", error);
+      console.error("Error checking business registration:", error.message);
     } finally {
       setLoading(false); // Stop loading in all cases
     }
@@ -70,12 +72,10 @@ function Dashboard() {
         </LogoutLink>
       </div>
 
-      <hr className="my-7 mx-10" style={{ height: '10px' }}/>
+      <hr className="my-7 mx-10" style={{ height: "10px" }} />
       <div className="px-10">
         <MeetingEventList />
-
       </div>
-      
     </div>
   );
 }
