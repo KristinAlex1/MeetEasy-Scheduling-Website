@@ -1,76 +1,65 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import MeetingTimeDateSelection from "../_components/MeetingTimeDateSelection";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, query, where } from "firebase/firestore";
 import { app } from "@/config/FirebaseConfig";
 
-function SharedMeetingEvent({ params: paramsPromise }) {
-  const db = getFirestore(app);
-  const [params, setParams] = useState(null); // Store resolved params
-  const [businessInfo, setBusinessInfo] = useState(null);
-  const [eventInfo, setEventInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
+function SharedMeetingEvent({ params: eventParamsPromise }) {
+  const firestore = getFirestore(app); // Renamed db to firestore for clarity
+  const [eventParams, setEventParams] = useState(null); // Renamed params to eventParams
+  const [businessDetails, setBusinessDetails] = useState(null); // Renamed businessInfo
+  const [meetingDetails, setMeetingDetails] = useState(null); // Renamed eventInfo
+  const [isLoading, setIsLoading] = useState(true); // Renamed loading to isLoading
 
   useEffect(() => {
     (async () => {
-      const resolvedParams = await paramsPromise; // Resolve params
-      setParams(resolvedParams);
+      const resolvedParams = await eventParamsPromise; // Resolving eventParams
+      setEventParams(resolvedParams); // Storing resolved eventParams
     })();
-  }, [paramsPromise]);
+  }, [eventParamsPromise]);
 
   useEffect(() => {
-    if (params) {
-      getMeetingBusinessAndEventDetails();
+    if (eventParams) {
+      fetchBusinessAndEventDetails(); // Fetch details only when eventParams are available
     }
-  }, [params]);
+  }, [eventParams]);
 
   /**
-   * Fetches business information and event details for the specified business owner and event.
+   * Fetches business and event details from Firestore based on the provided parameters.
    */
-  const getMeetingBusinessAndEventDetails = async () => {
-    setLoading(true);
+  const fetchBusinessAndEventDetails = async () => {
+    setIsLoading(true);
     try {
-      // Query to get business info based on the business name
-      const q = query(
-        collection(db, "Business"),
-        where("businessName", "==", params.business)
+      // Query Firestore for business details based on business name
+      const businessQuery = query(
+        collection(firestore, "Business"),
+        where("businessName", "==", eventParams.business)
       );
-      const docSnap = await getDocs(q);
+      const businessSnapshot = await getDocs(businessQuery);
 
-      docSnap.forEach((doc) => {
-        setBusinessInfo(doc.data());
+      businessSnapshot.forEach((doc) => {
+        setBusinessDetails(doc.data()); // Set business details after fetching
       });
 
-      // Fetch event details based on the meeting event ID
-      const docRef = doc(db, "MeetingEvent", params?.meetingEventId);
-      const result = await getDoc(docRef);
-      setEventInfo(result.data());
+      // Fetch event details based on event ID
+      const eventRef = doc(firestore, "MeetingEvent", eventParams?.meetingEventId);
+      const eventSnapshot = await getDoc(eventRef);
+      setMeetingDetails(eventSnapshot.data()); // Set event details after fetching
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Failed to fetch data:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false); // Set loading state to false after fetching
     }
   };
 
   return (
-    <div className="p-6 bg-gray-50 rounded-md shadow-md">
-      {loading ? (
-        <div className="flex justify-center items-center">
-          <span className="text-xl text-blue-600">Loading...</span>
+    <div className="container p-6 bg-light rounded-lg shadow-lg">
+      {isLoading ? (
+        <div className="centered">
+          <span className="loading-text">Loading, please wait...</span>
         </div>
       ) : (
-        <MeetingTimeDateSelection
-          eventInfo={eventInfo}
-          businessInfo={businessInfo}
-        />
+        <MeetingTimeDateSelection eventInfo={meetingDetails} businessInfo={businessDetails} />
       )}
     </div>
   );

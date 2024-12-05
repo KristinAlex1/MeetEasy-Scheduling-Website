@@ -68,37 +68,45 @@ function Availability() {
   };
 
   return (
-    <div className="p-8 bg-white shadow rounded-lg max-w-4xl mx-auto">
-      <h2 className="text-center text-3xl font-bold text-blue-600 mb-6">
-        Availability
-      </h2>
-      <hr className="border-gray-300 mb-8" />
+    <div className="p-8 bg-white shadow-lg rounded-xl max-w-4xl mx-auto">
+      <h1 className="text-center text-4xl font-extrabold text-blue-700 mb-8">
+        Set Your Availability
+      </h1>
 
-      <section>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Available Days
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="border-b mb-6 pb-4">
+        <h2 className="text-xl font-semibold text-gray-800">Available Days</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           {DaysList.map((item, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:shadow transition"
+              className={`flex items-center gap-3 p-4 rounded-lg transition shadow-sm ${
+                daysAvailable[item.day]
+                  ? "bg-blue-100 border border-blue-500"
+                  : "bg-gray-100 hover:shadow-lg"
+              }`}
             >
               <Checkbox
                 checked={daysAvailable[item.day] || false}
                 onCheckedChange={(e) => handleDayChange(item.day, e)}
+                className="focus:ring-blue-500"
               />
-              <label className="text-gray-700">{item.day}</label>
+              <label
+                className={`font-medium ${
+                  daysAvailable[item.day] ? "text-blue-700" : "text-gray-700"
+                }`}
+              >
+                {item.day}
+              </label>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      <section className="mt-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Available Times
-        </h3>
-        <div className="flex flex-col md:flex-row gap-8">
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Start Time
@@ -107,7 +115,7 @@ function Availability() {
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="border-gray-300 rounded w-full shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="border-gray-300 rounded-lg w-full focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
@@ -118,18 +126,18 @@ function Availability() {
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="border-gray-300 rounded w-full shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="border-gray-300 rounded-lg w-full focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
-      </section>
+      </div>
 
-      <div className="mt-10 text-center">
+      <div className="mt-10 flex justify-center">
         <Button
           onClick={handleSave}
-          className="px-6 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 focus:outline-none"
+          className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
         >
-          Save
+          Save Availability
         </Button>
       </div>
     </div>

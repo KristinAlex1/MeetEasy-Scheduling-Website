@@ -12,22 +12,23 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import LocationOption from "@/app/_utils/LocationOption";
-import ThemeOptions from "@/app/_utils/ThemeOptions";
 
-function MeetingForm({ setFormValue }) {
-  const [themeColor, setThemeColor] = useState("");
-  const [eventName, setEventName] = useState("");
-  const [duration, setDuration] = useState(30);
-  const [locationType, setLocationType] = useState("");
-  const [locationUrl, setLocationUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [generatedLink, setGeneratedLink] = useState("");
+
+const MeetingEventForm = ({ onFormDataChange }) => {
+  const [eventTitle, setEventTitle] = useState("");
+  const [meetingDuration, setMeetingDuration] = useState(30);
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [eventUrl, setEventUrl] = useState("");
+  const [themeChoice, setThemeChoice] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedMeetingLink, setGeneratedMeetingLink] = useState("");
+  const [calendarIntegration, setCalendarIntegration] = useState(false);
 
   const { user } = useKindeBrowserClient();
   const db = getFirestore(app);
   const router = useRouter();
 
-  const validateUrl = (url) => {
+  const validateEventUrl = (url) => {
     try {
       new URL(url);
       return true;
@@ -36,73 +37,73 @@ function MeetingForm({ setFormValue }) {
     }
   };
 
-  const updateFormValue = useCallback(() => {
-    if (setFormValue) {
-      setFormValue({
-        eventName,
-        duration,
-        locationType,
-        locationUrl,
-        themeColor,
+  const updateFormData = useCallback(() => {
+    if (onFormDataChange) {
+      onFormDataChange({
+        eventTitle,
+        meetingDuration,
+        selectedLocation,
+        eventUrl,
+        themeChoice,
       });
     }
-  }, [eventName, duration, locationType, locationUrl, themeColor, setFormValue]);
+  }, [eventTitle, meetingDuration, selectedLocation, eventUrl, themeChoice, onFormDataChange]);
 
   useEffect(() => {
-    updateFormValue();
-  }, [updateFormValue]);
+    updateFormData();
+  }, [updateFormData]);
 
-  const onCreateClick = useCallback(async () => {
+  const handleCreateEvent = useCallback(async () => {
     if (!user) {
       toast.error("User not authenticated.");
       return;
     }
 
-    if (!validateUrl(locationUrl)) {
+    if (!validateEventUrl(eventUrl)) {
       toast.error("Invalid URL format.");
       return;
     }
 
     try {
-      setLoading(true);
-      const id = Date.now().toString();
+      setIsLoading(true);
+      const eventId = Date.now().toString();
 
-      await setDoc(doc(db, "MeetingEvent", id), {
-        id,
-        eventName,
-        duration,
-        locationType,
-        locationUrl,
-        themeColor,
+      await setDoc(doc(db, "MeetingEvent", eventId), {
+        id: eventId,
+        eventTitle,
+        meetingDuration,
+        selectedLocation,
+        eventUrl,
+        themeChoice,
         businessId: doc(db, "Business", user?.email),
         createdBy: user?.email,
       });
 
       const origin = window.location.origin;
-      const link = `${origin}/${user?.email}/${id}`;
-      setGeneratedLink(link);
+      const eventLink = `${origin}/${user?.email}/${eventId}`;
+      setGeneratedMeetingLink(eventLink);
 
-      toast.success("New Meeting Event Created!");
+      toast.success("New meeting event created successfully!");
       router.replace("/dashboard/meeting-type");
     } catch (error) {
-      console.error("Error creating meeting event:", error?.message || error);
-      toast.error("Failed to create meeting. Please try again.");
+      console.error("Error creating event:", error?.message || error);
+      toast.error("Failed to create event. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [db, duration, eventName, locationType, locationUrl, themeColor, user, router]);
+  }, [db, meetingDuration, eventTitle, selectedLocation, eventUrl, themeChoice, user, router]);
 
-  const onCopyLink = useCallback(() => {
-    if (!generatedLink) {
+  const handleCopyLink = useCallback(() => {
+    if (!generatedMeetingLink) {
       toast.error("No link generated yet.");
       return;
     }
 
     navigator.clipboard
-      .writeText(generatedLink)
+      .writeText(generatedMeetingLink)
       .then(() => toast.success("Link copied to clipboard!"))
       .catch(() => toast.error("Failed to copy link."));
-  }, [generatedLink]);
+  }, [generatedMeetingLink]);
 
   return (
     <div className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
@@ -111,32 +112,32 @@ function MeetingForm({ setFormValue }) {
         <span className="text-lg font-semibold">Cancel</span>
       </Link>
 
-      <h2 className="text-3xl font-semibold text-center mb-6">Create New Event</h2>
+      <h2 className="text-3xl text-primary font-semibold text-center mb-6">Create Your Event</h2>
       <hr className="mb-6" />
 
       <div className="space-y-6">
-        {/* Event Name */}
+        {/* Event Title */}
         <div>
-          <label className="block text-lg font-semibold mb-2">Event Name *</label>
+          <label className="block text-lg font-semibold mb-2">Event Title *</label>
           <Input
-            placeholder="Name of your meeting event"
-            value={eventName}
-            onChange={(event) => setEventName(event.target.value)}
+            placeholder="Name of your event"
+            value={eventTitle}
+            onChange={(event) => setEventTitle(event.target.value)}
             className="px-4 py-3 rounded-lg border border-gray-300 w-full focus:ring-2 focus:ring-primary"
           />
         </div>
 
-        {/* Duration */}
+        {/* Meeting Duration */}
         <div>
-          <label className="block text-lg font-semibold mb-2">Duration *</label>
+          <label className="block text-lg font-semibold mb-2">Meeting Duration *</label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full py-3 text-lg">{duration} Min</Button>
+              <Button variant="outline" className="w-full py-3 text-lg">{meetingDuration} Min</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full">
-              {[15, 30, 45, 60].map((dur) => (
-                <DropdownMenuItem key={dur} onClick={() => setDuration(dur)} className="hover:bg-gray-100 px-4 py-2">
-                  {dur} Min
+              {[15, 30, 45, 60].map((duration) => (
+                <DropdownMenuItem key={duration} onClick={() => setMeetingDuration(duration)} className="hover:bg-gray-100 px-4 py-2">
+                  {duration} Min
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -150,10 +151,8 @@ function MeetingForm({ setFormValue }) {
             {LocationOption.map((option) => (
               <div
                 key={option.name}
-                className={`border flex flex-col items-center p-4 rounded-lg cursor-pointer transition-all hover:bg-primary-light ${
-                  locationType === option.name && "bg-primary-light border-primary"
-                }`}
-                onClick={() => setLocationType(option.name)}
+                className={`border flex flex-col items-center p-4 rounded-lg cursor-pointer transition-all hover:bg-primary-light ${selectedLocation === option.name && "bg-primary-light border-primary"}`}
+                onClick={() => setSelectedLocation(option.name)}
               >
                 <Image src={option.icon} width={30} height={30} alt={option.name} />
                 <span className="mt-2">{option.name}</span>
@@ -162,57 +161,52 @@ function MeetingForm({ setFormValue }) {
           </div>
         </div>
 
-        {locationType && (
+        {selectedLocation && (
           <div>
-            <label className="block text-lg font-semibold mb-2">Add {locationType} URL *</label>
+            <label className="block text-lg font-semibold mb-2">Add {selectedLocation} URL *</label>
             <Input
               placeholder="Add URL"
-              value={locationUrl}
-              onChange={(event) => setLocationUrl(event.target.value)}
+              value={eventUrl}
+              onChange={(event) => setEventUrl(event.target.value)}
               className="px-4 py-3 rounded-lg border border-gray-300 w-full focus:ring-2 focus:ring-primary"
             />
           </div>
         )}
+      </div>
 
-        {/* Theme Color */}
-        <div>
-          <label className="block text-lg font-semibold mb-2">Select Theme Color</label>
-          <div className="flex justify-evenly">
-            {ThemeOptions.map((color) => (
-              <div
-                key={color}
-                className={`h-8 w-8 rounded-full cursor-pointer transition-all ${
-                  themeColor === color ? "border-4 border-black" : ""
-                }`}
-                style={{ backgroundColor: color }}
-                onClick={() => setThemeColor(color)}
-              />
-            ))}
-          </div>
-        </div>
+      {/* Google Calendar Integration */}
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="calendarIntegration"
+          checked={calendarIntegration}
+          onChange={() => setCalendarIntegration(!calendarIntegration)}
+          className="mr-2"
+        />
+        <label htmlFor="calendarIntegration" className="text-lg">Add to Google Calendar</label>
       </div>
 
       {/* Submit Button */}
       <Button
         className="w-full mt-8 py-3 text-lg font-semibold"
-        disabled={!eventName || !duration || !locationType || !locationUrl || loading}
-        onClick={onCreateClick}
+        disabled={!eventTitle || !meetingDuration || !selectedLocation || !eventUrl || isLoading}
+        onClick={handleCreateEvent}
       >
-        {loading ? "Creating..." : "Create Event"}
+        {isLoading ? "Creating..." : "Create Event"}
       </Button>
 
       {/* Copy Link Button */}
-      {generatedLink && (
+      {generatedMeetingLink && (
         <Button
           variant="outline"
           className="w-full mt-4 py-3 text-lg"
-          onClick={onCopyLink}
+          onClick={handleCopyLink}
         >
           Copy Link
         </Button>
       )}
     </div>
   );
-}
+};
 
-export default MeetingForm;
+export default MeetingEventForm;

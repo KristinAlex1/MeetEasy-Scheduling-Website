@@ -19,35 +19,52 @@ import {
 function DashboardHeader() {
   const { user } = useKindeBrowserClient();
 
-  if (!user) return null; // Early return if user is not available
+  // Return a placeholder if the user is not logged in
+  if (!user) {
+    return (
+      <div className="p-4 px-10 flex justify-end">
+        <span className="text-sm text-gray-500">Not logged in</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 px-10">
-      <div className="flex items-center float-right">
+    <header className="bg-gray-100 border-b p-5 px-8">
+      <div className="flex items-center justify-end">
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center">
+          <DropdownMenuTrigger className="flex items-center gap-2">
             <Image
-              src={user?.picture || "/default-avatar.png"} // Fallback to a default avatar if no picture is provided
+              src={user?.picture || "/default-avatar.png"} // Default avatar if no picture is provided
               alt="User Avatar"
-              width={50}
-              height={50}
-              className="rounded-full"
+              width={40} // Reduced size for a cleaner look
+              height={40}
+              className="rounded-full border border-gray-300"
             />
-            <ChevronDown />
+            <span className="font-medium text-gray-700 text-sm">
+              {user?.name || "Guest"} {/* Display name or 'Guest' */}
+            </span>
+            <ChevronDown className="text-gray-500" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
+          <DropdownMenuContent className="w-48 bg-white border">
+            <DropdownMenuLabel className="text-gray-700">Account</DropdownMenuLabel>
+            <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem>
-              <LogoutLink>Log out</LogoutLink>
+              <span className="text-sm text-gray-600">Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <span className="text-sm text-gray-600">Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <span className="text-sm text-gray-600">Subscription</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="my-1" />
+            <DropdownMenuItem>
+              <LogoutLink className="text-sm text-red-600 hover:underline">Log out</LogoutLink>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </header>
   );
 }
 

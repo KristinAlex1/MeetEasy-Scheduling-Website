@@ -3,21 +3,24 @@ import React, { useState } from "react";
 import MeetingForm from "./_components/MeetingForm";
 import PreviewMeeting from "./_components/PreviewMeeting";
 
-function CreateMeeting() {
-  const [formValue, setFormValue] = useState(null); // Initialize formValue with null
+function ScheduleMeeting() {
+  const [meetingDetails, updateMeetingDetails] = useState(null); // Using a different variable name
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-      {/* Meeting Form */}
-      <div className="shadow-lg border rounded-lg h-screen flex flex-col justify-start p-4">
-        <MeetingForm setFormValue={setFormValue} />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-4">
+      {/* Form Section */}
+      <div className="shadow-sm border rounded-md flex flex-col p-5 bg-gray-50">
+        <h2 className="text-xl font-bold mb-4 text-gray-700">Create Meeting</h2>
+        <MeetingForm setFormValue={updateMeetingDetails} />
       </div>
-      {/* Preview */}
-      <div className="md:col-span-2 shadow-lg border rounded-lg p-4">
-        <PreviewMeeting formValue={formValue} />
+
+      {/* Preview Section */}
+      <div className="lg:col-span-2 shadow-sm border rounded-md p-5 bg-white">
+        <h2 className="text-xl font-bold mb-4 text-gray-700">Meeting Preview</h2>
+        <PreviewMeeting formValue={meetingDetails} />
       </div>
     </div>
   );
 }
 
-export default CreateMeeting;
+export default ScheduleMeeting;

@@ -19,10 +19,11 @@ function ProductPage() {
         const data = await response.json();
         setReviews(data);  // Update state with the fetched reviews
       } else {
-        console.error("Failed to fetch reviews");
+        setError("Failed to load reviews."); // Show error message if fetch fails
       }
     } catch (err) {
       console.error("Error fetching reviews:", err);
+      setError("Error fetching reviews.");  // Display error in case of network issue
     }
   };
 
@@ -50,10 +51,11 @@ function ProductPage() {
         setContent("");
         setError("");  // Clear error if submission is successful
       } else {
-        console.error("Failed to add review");
+        setError("Failed to add review.");  // Handle the case where submission fails
       }
     } catch (err) {
       console.error("Error submitting review:", err);
+      setError("Error submitting review.");  // Error handling for submission
     }
   };
 
@@ -110,12 +112,16 @@ function ProductPage() {
           <h2 className="text-3xl font-bold text-center mb-10">What Our Users Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Render existing reviews */}
-            {reviews.map((review, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <p className="text-gray-700 mb-4">{review.content}</p>
-                <h4 className="text-lg font-bold">- {review.user}</h4>
-              </div>
-            ))}
+            {reviews.length > 0 ? (
+              reviews.map((review, index) => (
+                <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+                  <p className="text-gray-700 mb-4">{review.content}</p>
+                  <h4 className="text-lg font-bold">- {review.user}</h4>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-600">No reviews yet. Be the first to submit!</p>
+            )}
           </div>
         </div>
       </section>

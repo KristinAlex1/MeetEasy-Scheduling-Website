@@ -1,92 +1,91 @@
 'use client'; // Mark this file as client-side
 
-import { useState } from "react";  // Now you can use useState
-import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+import { useState } from 'react'; // Now you can use useState
+import { Button } from '@/components/ui/button';
+import { CheckCircle } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
+import ReactConfetti from 'react-confetti'; // For confetti effect
 
 function Confirmation() {
-  const [fullName, setFullName] = useState("");
-  const [review, setReview] = useState("");
+  const [fullName, setFullName] = useState('');
+  const [review, setReview] = useState('');
   const [rating, setRating] = useState(0);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // Handle the form submission
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
 
     // Check if all fields are filled
     if (!fullName || !review || rating === 0 || !email) {
-      alert("Please fill out all fields");
+      alert('Please fill out all fields');
       return;
     }
 
     try {
-      // Here you would typically send the review data to a backend or Firestore
-      // For now, we just log it
       console.log({ fullName, review, rating, email });
 
-      // After submission, clear the form
-      setFullName("");
-      setReview("");
+      // Clear the form after submission
+      setFullName('');
+      setReview('');
       setRating(0);
-      setEmail("");
+      setEmail('');
 
-      alert("Review submitted successfully! We will send a confirmation email.");
+      // Show success and trigger confetti effect
+      setIsSubmitted(true);
+      alert('Review submitted successfully! We will send a confirmation email.');
 
-      // You can call an API function to send an email here
       sendEmailToRecipient();
     } catch (error) {
-      console.error("Error submitting review:", error);
+      console.error('Error submitting review:', error);
     }
   };
 
   const sendEmailToRecipient = async () => {
-    // Function to send email (e.g., using SendGrid, Nodemailer, etc.)
     const emailContent = `
       Hi, ${fullName} has scheduled a meeting and submitted a review. Below are the details:
-      
       Meeting Time: [Insert Meeting Time Here]
       Review: ${review}
       Rating: ${rating} stars
-
       Thank you!`;
 
-    // API call to send the email goes here (e.g., using Fetch API)
-    console.log("Sending email with content:", emailContent);
+    console.log('Sending email with content:', emailContent);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 p-20">
-      <CheckCircle className="h-9 w-9 text-green-500" />
-      <h2 className="font-bold text-3xl">Your meeting scheduled successfully!</h2>
-      <h2 className="text-lg text-gray-500">Confirmation sent on your email</h2>
-      
+    <div className="relative p-20 flex flex-col items-center justify-center gap-6">
+      {isSubmitted && <ReactConfetti width={window.innerWidth} height={window.innerHeight} />}
+      <CheckCircle className="h-12 w-12 text-green-600 mb-4" />
+      <h2 className="font-extrabold text-4xl text-center text-gray-800">Your meeting has been scheduled successfully!</h2>
+      <h3 className="text-lg text-center text-gray-600">A confirmation has been sent to your email.</h3>
+
       {/* Review Form */}
-      <div className="mt-8 w-full max-w-md">
-        <h3 className="text-xl font-semibold mb-4">Please submit your review:</h3>
-        <form onSubmit={handleReviewSubmit} className="flex flex-col gap-4">
+      <div className="mt-8 max-w-md w-full">
+        <h3 className="text-xl font-semibold mb-4 text-gray-700">We'd love to hear your thoughts!</h3>
+        <form onSubmit={handleReviewSubmit} className="space-y-4">
           <input
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="Your Name"
-            className="p-2 border rounded"
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <textarea
             value={review}
             onChange={(e) => setReview(e.target.value)}
-            placeholder="Your Review"
-            className="p-2 border rounded"
+            placeholder="Write your review"
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <div className="flex gap-2">
+          <div className="flex gap-3 items-center">
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
                 onClick={() => setRating(star)}
-                className={`cursor-pointer text-xl ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                className={`cursor-pointer text-2xl ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
               >
                 ★
               </span>
@@ -97,17 +96,20 @@ function Confirmation() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Recipient's Email"
-            className="p-2 border rounded"
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <button type="submit" className="p-2 bg-blue-600 text-white rounded">
-            Submit Review and Send Email
+          <button type="submit" className="w-full p-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
+            Submit Review and Send Confirmation Email
           </button>
         </form>
       </div>
-      
-      <Link href={"/"}>
-        <Button className="mt-4">Thank you</Button>
+
+      {/* Redirect Button */}
+      <Link href="/">
+        <Button className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">
+          Thank You!
+        </Button>
       </Link>
     </div>
   );

@@ -224,7 +224,7 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
             onClick={handleScheduleEvent}
             className="mt-10"
           >
-            {loading ? <LoaderIcon className="animate-spin" /> : "Schedule Event"}
+            {loading ? <LoaderIcon className="animate-spin" /> : "Schedule Meeting"}
           </Button>
         )}
       </div>

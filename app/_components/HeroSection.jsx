@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, LinkIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import React from "react";
 import Link from "next/link";
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs";
 
@@ -28,7 +27,7 @@ function Hero() {
   ];
 
   return (
-    <main className="container  mx-auto px-10 py-5">
+    <main className="container mx-auto px-10 py-5">
       {/* Hero Section */}
       <div className="flex flex-col lg:flex-row px-5 mb-100 items-center justify-between gap-12 mb-10 shadow-bottom-md">
         <div className="lg:w-1/2 order-2 lg:order-1">
@@ -83,7 +82,7 @@ function Hero() {
       </div>
 
       {/* Circular Images around the Text */}
-      <div className=" mt-20 relative flex flex-col justify-center items-center my-20">
+      <div className="mt-20 relative flex flex-col justify-center items-center my-20">
         <div className="hidden lg:block">
           <Image
             src="/profile1.png"
@@ -118,7 +117,7 @@ function Hero() {
         {/* Text in the Center */}
         <div className="mb-20 text-center max-w-3xl relative z-10">
           <h2 className="font-bold text-[60px] text-blue-600">
-            Easy scheduling ahead
+            Simplify scheduling 
           </h2>
           <h2 className="text-xl mt-5 text-slate-500">
             MeetEasy is your scheduling automation platform for eliminating the

@@ -35,13 +35,17 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --body_background: white;
+    --body_color: black;
+    --link_color: navy;
   }
 
   /* Dark mode styles */
-  .dark {
+  [data-theme="dark"] {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
+    --font-color: white;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
@@ -63,6 +67,9 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --body_background: #282c34;
+    --body_color: white;
+    --link_color: cyan;
   }
 }
 

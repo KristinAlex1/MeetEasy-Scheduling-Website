@@ -103,7 +103,7 @@ function MeetingEventList() {
 
   return (
     <div className="mt-10">
-      <h1 className="text-center text-3xl font-bold mb-8 text-gray-800">
+      <h1 className="text-center text-3xl font-bold mb-8 text-blue-600">
         Meeting List
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">

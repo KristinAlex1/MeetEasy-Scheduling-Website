@@ -7,39 +7,30 @@ import { Toaster } from "@/components/ui/sonner"; // Import the Toaster componen
 import { ThemeProvider, useTheme } from "./context/ThemeContext"; // Import useTheme here
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useEffect } from "react"; // Import useEffect for client-side logic
+import DarkMode from "@/components/ui/DarkMode/DarkMode";
 
 const inter = Inter({ subsets: ["latin"] });
 
 // A helper component to apply the dark theme class to the <html> element
-const ThemeWrapper = ({ children }) => {
-  const { isDarkMode } = useTheme();
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
-
-  return <>{children}</>;
-};
+<nav className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-800">
+      <div>My Website</div>
+      {/* Add the Dark Mode Toggle */}
+      <ThemeToggle />
+    </nav>
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
         <Toaster />
-        <ThemeProvider>
-          <ThemeWrapper> {/* Add ThemeWrapper here */}
+        
+       {/* Add ThemeWrapper here */}
             <div className="min-h-screen">
-              <header className="p-4 bg-gray-100 dark:bg-gray-800">
-                <ThemeToggle /> {/* Dark Mode Toggle */}
-              </header>
+            
+              <DarkMode />
               <main>{children}</main>
             </div>
-          </ThemeWrapper>
-        </ThemeProvider>
+          
       </body>
     </html>
   );
