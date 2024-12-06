@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
@@ -12,7 +12,6 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import LocationOption from "@/app/_utils/LocationOption";
-
 
 const MeetingEventForm = ({ onFormDataChange }) => {
   const [eventTitle, setEventTitle] = useState("");
@@ -37,23 +36,21 @@ const MeetingEventForm = ({ onFormDataChange }) => {
     }
   };
 
-  const updateFormData = useCallback(() => {
-    if (onFormDataChange) {
-      onFormDataChange({
-        eventTitle,
-        meetingDuration,
-        selectedLocation,
-        eventUrl,
-        themeChoice,
-      });
-    }
-  }, [eventTitle, meetingDuration, selectedLocation, eventUrl, themeChoice, onFormDataChange]);
+  const updateFormData = () => {
+    onFormDataChange?.({
+      eventTitle,
+      meetingDuration,
+      selectedLocation,
+      eventUrl,
+      themeChoice,
+    });
+  };
 
   useEffect(() => {
     updateFormData();
-  }, [updateFormData]);
+  }, [eventTitle, meetingDuration, selectedLocation, eventUrl, themeChoice]);
 
-  const handleCreateEvent = useCallback(async () => {
+  const handleCreateEvent = async () => {
     if (!user) {
       toast.error("User not authenticated.");
       return;
@@ -64,10 +61,10 @@ const MeetingEventForm = ({ onFormDataChange }) => {
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const eventId = Date.now().toString();
+    setIsLoading(true);
+    const eventId = Date.now().toString();
 
+    try {
       await setDoc(doc(db, "MeetingEvent", eventId), {
         id: eventId,
         eventTitle,
@@ -91,9 +88,9 @@ const MeetingEventForm = ({ onFormDataChange }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [db, meetingDuration, eventTitle, selectedLocation, eventUrl, themeChoice, user, router]);
+  };
 
-  const handleCopyLink = useCallback(() => {
+  const handleCopyLink = () => {
     if (!generatedMeetingLink) {
       toast.error("No link generated yet.");
       return;
@@ -103,7 +100,7 @@ const MeetingEventForm = ({ onFormDataChange }) => {
       .writeText(generatedMeetingLink)
       .then(() => toast.success("Link copied to clipboard!"))
       .catch(() => toast.error("Failed to copy link."));
-  }, [generatedMeetingLink]);
+  };
 
   return (
     <div className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
@@ -116,23 +113,23 @@ const MeetingEventForm = ({ onFormDataChange }) => {
       <hr className="mb-6" />
 
       <div className="space-y-6">
-        {/* Event Title */}
         <div>
           <label className="block text-lg font-semibold mb-2">Event Title *</label>
           <Input
             placeholder="Name of your event"
             value={eventTitle}
-            onChange={(event) => setEventTitle(event.target.value)}
+            onChange={(e) => setEventTitle(e.target.value)}
             className="px-4 py-3 rounded-lg border border-gray-300 w-full focus:ring-2 focus:ring-primary"
           />
         </div>
 
-        {/* Meeting Duration */}
         <div>
           <label className="block text-lg font-semibold mb-2">Meeting Duration *</label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full py-3 text-lg">{meetingDuration} Min</Button>
+              <Button variant="outline" className="w-full py-3 text-lg">
+                {meetingDuration} Min
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full">
               {[15, 30, 45, 60].map((duration) => (
@@ -144,7 +141,6 @@ const MeetingEventForm = ({ onFormDataChange }) => {
           </DropdownMenu>
         </div>
 
-        {/* Location */}
         <div>
           <label className="block text-lg font-semibold mb-2">Location *</label>
           <div className="grid grid-cols-4 gap-4">
@@ -167,26 +163,24 @@ const MeetingEventForm = ({ onFormDataChange }) => {
             <Input
               placeholder="Add URL"
               value={eventUrl}
-              onChange={(event) => setEventUrl(event.target.value)}
+              onChange={(e) => setEventUrl(e.target.value)}
               className="px-4 py-3 rounded-lg border border-gray-300 w-full focus:ring-2 focus:ring-primary"
             />
           </div>
         )}
       </div>
 
-      {/* Google Calendar Integration */}
       <div className="flex items-center">
         <input
           type="checkbox"
           id="calendarIntegration"
           checked={calendarIntegration}
-          onChange={() => setCalendarIntegration(!calendarIntegration)}
+          onChange={() => setCalendarIntegration((prev) => !prev)}
           className="mr-2"
         />
         <label htmlFor="calendarIntegration" className="text-lg">Add to Google Calendar</label>
       </div>
 
-      {/* Submit Button */}
       <Button
         className="w-full mt-8 py-3 text-lg font-semibold"
         disabled={!eventTitle || !meetingDuration || !selectedLocation || !eventUrl || isLoading}
@@ -195,7 +189,6 @@ const MeetingEventForm = ({ onFormDataChange }) => {
         {isLoading ? "Creating..." : "Create Event"}
       </Button>
 
-      {/* Copy Link Button */}
       {generatedMeetingLink && (
         <Button
           variant="outline"

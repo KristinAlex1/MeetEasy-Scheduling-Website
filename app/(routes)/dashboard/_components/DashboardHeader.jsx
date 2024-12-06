@@ -1,20 +1,10 @@
 "use client";
 
-import {
-  LogoutLink,
-  useKindeBrowserClient,
-} from "@kinde-oss/kinde-auth-nextjs";
+import { LogoutLink, useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 function DashboardHeader() {
   const { user } = useKindeBrowserClient();
@@ -34,14 +24,14 @@ function DashboardHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2">
             <Image
-              src={user?.picture || "/default-avatar.png"} // Default avatar if no picture is provided
+              src={user.picture || "/default-avatar.png"} // Default avatar if no picture is provided
               alt="User Avatar"
               width={40} // Reduced size for a cleaner look
               height={40}
               className="rounded-full border border-gray-300"
             />
             <span className="font-medium text-gray-700 text-sm">
-              {user?.name || "Guest"} {/* Display name or 'Guest' */}
+              {user.name || "Guest"} {/* Display name or 'Guest' */}
             </span>
             <ChevronDown className="text-gray-500" />
           </DropdownMenuTrigger>

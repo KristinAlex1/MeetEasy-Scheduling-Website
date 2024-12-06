@@ -19,33 +19,31 @@ function Dashboard() {
 
   useEffect(() => {
     if (user) {
-      console.log("useEffect triggered with user:", user);
-      isBusinessRegistered();
+      console.log("User found:", user);
+      checkIfBusinessExists();
     }
   }, [user]);
 
-  const isBusinessRegistered = async () => {
+  const checkIfBusinessExists = async () => {
     try {
       if (!user?.email) {
         console.error("User email is unavailable.");
         return;
       }
 
-      const docRef = doc(db, "BUSINESS", user.email);
-      const docSnap = await getDoc(docRef);
+      const businessDoc = doc(db, "BUSINESS", user.email);
+      const businessSnapshot = await getDoc(businessDoc);
 
-      if (docSnap.exists()) {
-        console.log("Business exists:", docSnap.data());
+      if (businessSnapshot.exists()) {
+        console.log("Business is already registered:", businessSnapshot.data());
       } else {
-        console.log(
-          "No such document. Redirecting to business registration..."
-        );
+        console.log("Business not registered, redirecting to registration...");
         router.replace("/dashboard");
       }
     } catch (error) {
-      console.error("Error checking business registration:", error);
+      console.error("Error while checking business registration:", error);
     } finally {
-      setLoading(false); // Stop loading in all cases
+      setLoading(false);
     }
   };
 
@@ -74,7 +72,6 @@ function Dashboard() {
       <div className="px-10">
         <MeetingEventList />
       </div>
-      
     </div>
   );
 }

@@ -24,87 +24,92 @@ import Email from "@/emails";
 
 function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
   const [date, setDate] = useState(new Date());
-  const [timeSlots, setTimeSlots] = useState();
-  const [enableTimeSlot, setEnabledTimeSlot] = useState(false);
-  const [selectedTime, setSelectedTime] = useState();
-  const [userName, setUserName] = useState();
-  const [userEmail, setUserEmail] = useState();
-  const [userNote, setUserNote] = useState("");
-  const [prevBooking, setPrevBooking] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [isTimeSlotAvailable, setIsTimeSlotAvailable] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userNote, setUserNote] = useState('');
+  const [previousBookings, setPreviousBookings] = useState([]);
   const [step, setStep] = useState(1);
   const router = useRouter();
   const db = getFirestore(app);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    eventInfo?.duration && createTimeSlot(eventInfo?.duration);
+    if (eventInfo?.duration) {
+      generateTimeSlots(eventInfo?.duration);
+    }
   }, [eventInfo]);
 
-  const createTimeSlot = (interval) => {
-    const startTime = 8 * 60; // 8 AM in minutes
-    const endTime = 22 * 60; // 10 PM in minutes
-    const totalSlots = (endTime - startTime) / interval;
-    const slots = Array.from({ length: totalSlots }, (_, i) => {
-      const totalMinutes = startTime + i * interval;
+  const generateTimeSlots = (interval) => {
+    const startOfDay = 8 * 60; // 8 AM in minutes
+    const endOfDay = 22 * 60; // 10 PM in minutes
+    const totalSlots = (endOfDay - startOfDay) / interval;
+    
+    const slots = [];
+    for (let i = 0; i < totalSlots; i++) {
+      const totalMinutes = startOfDay + i * interval;
       const hours = Math.floor(totalMinutes / 60);
       const minutes = totalMinutes % 60;
-      const formattedHours = hours > 12 ? hours - 12 : hours; // Convert to 12-hour format
-      const period = hours >= 12 ? "PM" : "AM";
-      return `${String(formattedHours).padStart(2, "0")}:${String(
-        minutes
-      ).padStart(2, "0")} ${period}`;
-    });
+      const formattedHours = hours % 12 || 12;
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const timeSlot = `${String(formattedHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
+      slots.push(timeSlot);
+    }
 
     setTimeSlots(slots);
   };
 
-  const handleDateChange = (date) => {
-    setDate(date);
-    const day = format(date, "EEEE");
-    if (businessInfo?.daysAvailable?.[day]) {
-      getPrevEventBooking(date);
-      setEnabledTimeSlot(true);
+  const onDateChange = (newDate) => {
+    setDate(newDate);
+    const dayOfWeek = format(newDate, "EEEE");
+    if (businessInfo?.daysAvailable?.[dayOfWeek]) {
+      fetchPreviousBookings(newDate);
+      setIsTimeSlotAvailable(true);
     } else {
-      setEnabledTimeSlot(false);
+      setIsTimeSlotAvailable(false);
     }
   };
 
-  const handleScheduleEvent = async () => {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!regex.test(userEmail)) {
-      toast("Enter a valid email address");
+  const scheduleMeeting = async () => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailPattern.test(userEmail)) {
+      toast("Please provide a valid email address");
       return;
     }
-    const docId = Date.now().toString();
-    setLoading(true);
+
+    const documentId = Date.now().toString();
+    setIsLoading(true);
+
     try {
-      await setDoc(doc(db, "ScheduledMeetings", docId), {
+      await setDoc(doc(db, "ScheduledMeetings", documentId), {
         businessName: businessInfo.businessName,
         businessEmail: businessInfo.email,
         selectedTime,
         selectedDate: date,
-        formatedDate: format(date, "PPP"),
-        formatedTimeStamp: format(date, "t"),
+        formattedDate: format(date, "PPP"),
+        timestamp: format(date, "t"),
         duration: eventInfo.duration,
         locationUrl: eventInfo.locationUrl,
         eventId: eventInfo.id,
-        id: docId,
+        id: documentId,
         userName,
         userEmail,
         userNote,
       });
 
-      toast("Meeting Scheduled successfully!");
-      await sendEmail(userName); // Trigger the email after Firestore write
+      toast("Meeting has been scheduled successfully!");
+      await sendEmailNotification(userName); // Send email after successful booking
     } catch (error) {
       console.error("Error scheduling meeting:", error.message || error);
-      toast("Failed to schedule meeting. Please try again.");
+      toast("Failed to schedule meeting, please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const sendEmail = async (user) => {
+  const sendEmailNotification = async (user) => {
     try {
       const emailHtml = await render(
         <Email
@@ -125,35 +130,37 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         },
         body: JSON.stringify({
           to: userEmail,
-          subject: "Meeting Schedule Details",
+          subject: "Your Meeting Schedule Details",
           body: emailHtml,
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to send email");
+        throw new Error(error.message || "Error sending email");
       }
 
       router.replace("/confirmation");
     } catch (error) {
       console.error("Error sending email:", error.message || error);
-      toast("Failed to send email. Please try again.");
+      toast("Failed to send email, please try again.");
     }
   };
 
-  const getPrevEventBooking = async (date_) => {
-    const q = query(
+  const fetchPreviousBookings = async (selectedDate) => {
+    const bookingsQuery = query(
       collection(db, "ScheduledMeetings"),
-      where("selectedDate", "==", date_),
+      where("selectedDate", "==", selectedDate),
       where("eventId", "==", eventInfo.id)
     );
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(bookingsQuery);
 
+    const bookings = [];
     querySnapshot.forEach((doc) => {
-      setPrevBooking((prev) => [...prev, doc.data()]);
+      bookings.push(doc.data());
     });
+    setPreviousBookings(bookings);
   };
 
   return (
@@ -189,12 +196,12 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
         {step === 1 ? (
           <TimeDateSelection
             date={date}
-            enableTimeSlot={enableTimeSlot}
-            handleDateChange={handleDateChange}
+            isTimeSlotAvailable={isTimeSlotAvailable}
+            onDateChange={onDateChange}
             setSelectedTime={setSelectedTime}
             timeSlots={timeSlots}
             selectedTime={selectedTime}
-            prevBooking={prevBooking}
+            previousBookings={previousBookings}
           />
         ) : (
           <UserFormInfo
@@ -214,17 +221,17 @@ function MeetingTimeDateSelection({ eventInfo, businessInfo }) {
           <Button
             className="mt-10"
             disabled={!selectedTime || !date}
-            onClick={() => setStep(step + 1)}
+            onClick={() => setStep(2)}
           >
             Next
           </Button>
         ) : (
           <Button
-            disabled={!userEmail || !userName}
-            onClick={handleScheduleEvent}
             className="mt-10"
+            disabled={isLoading || !userName || !userEmail || !userNote}
+            onClick={scheduleMeeting}
           >
-            {loading ? <LoaderIcon className="animate-spin" /> : "Schedule Meeting"}
+            {isLoading ? <LoaderIcon className="animate-spin" /> : "Confirm"}
           </Button>
         )}
       </div>

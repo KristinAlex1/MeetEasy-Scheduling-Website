@@ -23,94 +23,94 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-function MeetingEventList() {
+function EventList() {
   const db = getFirestore(app);
   const { user } = useKindeBrowserClient();
-  const [businessInfo, setBusinessInfo] = useState(null);
-  const [eventList, setEventList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [userBusinessInfo, setUserBusinessInfo] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
-      getEventList();
-      fetchBusinessInfo();
+      fetchEvents();
+      retrieveBusinessInfo();
     }
   }, [user]);
 
-  const getEventList = async () => {
+  const fetchEvents = async () => {
     try {
-      setLoading(true);
-      const q = query(
-        collection(db, "MeetingEvent"),
+      setIsLoading(true);
+      const eventsQuery = query(
+        collection(db, "Events"),
         where("createdBy", "==", user?.email),
         orderBy("id", "desc")
       );
 
-      const querySnapshot = await getDocs(q);
-      const events = querySnapshot.docs.map((doc) => doc.data());
-      setEventList(events);
+      const eventSnapshot = await getDocs(eventsQuery);
+      const eventData = eventSnapshot.docs.map((doc) => doc.data());
+      setEvents(eventData);
     } catch (error) {
       console.error("Error fetching events:", error);
-      toast.error("Failed to fetch events.");
+      toast.error("Failed to load events.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const fetchBusinessInfo = async () => {
+  const retrieveBusinessInfo = async () => {
     try {
-      const docRef = doc(db, "Business", user.email);
-      const docSnap = await getDoc(docRef);
+      const businessDocRef = doc(db, "Business", user.email);
+      const businessDocSnap = await getDoc(businessDocRef);
 
-      if (docSnap.exists()) {
-        setBusinessInfo(docSnap.data());
+      if (businessDocSnap.exists()) {
+        setUserBusinessInfo(businessDocSnap.data());
       } else {
-        console.warn("No business info found.");
+        console.warn("No business info available.");
       }
     } catch (error) {
       console.error("Error fetching business info:", error);
     }
   };
 
-  const onDeleteMeetingEvent = async (event) => {
+  const handleDeleteEvent = async (event) => {
     try {
-      await deleteDoc(doc(db, "MeetingEvent", event?.id));
-      toast.success("Meeting Event Deleted!");
-      getEventList();
+      await deleteDoc(doc(db, "Events", event?.id));
+      toast.success("Event successfully deleted!");
+      fetchEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
       toast.error("Failed to delete event.");
     }
   };
 
-  const onCopyClickHandler = (event) => {
-    if (!businessInfo?.businessName || !event?.id) {
-      toast.error("Missing business or event information.");
+  const handleCopyLink = (event) => {
+    if (!userBusinessInfo?.businessName || !event?.id) {
+      toast.error("Missing business or event details.");
       return;
     }
 
-    const meetingEventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${businessInfo.businessName}/${event.id}`;
-    window.open(meetingEventUrl, "_blank");
+    const eventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${userBusinessInfo.businessName}/${event.id}`;
+    window.open(eventUrl, "_blank");
 
     navigator.clipboard
-      .writeText(meetingEventUrl)
-      .then(() => toast.success("Link copied to clipboard!"))
+      .writeText(eventUrl)
+      .then(() => toast.success("Event link copied to clipboard!"))
       .catch((error) => {
-        console.error("Failed to copy link:", error);
-        toast.error("Failed to copy link.");
+        console.error("Failed to copy event link:", error);
+        toast.error("Unable to copy the link.");
       });
   };
 
   return (
     <div className="mt-10">
       <h1 className="text-center text-3xl font-bold mb-8 text-blue-600">
-        Meeting List
+        My Scheduled Events
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-        {loading ? (
-          <h2 className="text-center text-lg text-gray-600">Loading...</h2>
-        ) : eventList.length > 0 ? (
-          eventList.map((event) => (
+        {isLoading ? (
+          <h2 className="text-center text-lg text-gray-600">Loading events...</h2>
+        ) : events.length > 0 ? (
+          events.map((event) => (
             <div
               key={event.id}
               className="border shadow-lg border-t-8 rounded-lg p-6 bg-white hover:shadow-2xl transition-all duration-300"
@@ -130,16 +130,16 @@ function MeetingEventList() {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="flex gap-2"
-                      onClick={() => onDeleteMeetingEvent(event)}
+                      onClick={() => handleDeleteEvent(event)}
                     >
-                      <Trash /> Delete
+                      <Trash /> Remove
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
               <div className="flex justify-between text-gray-600 mt-4">
                 <span className="flex gap-2 items-center">
-                  <Clock /> {event.duration} Min
+                  <Clock /> {event.duration} Minutes
                 </span>
                 <span className="flex gap-2 items-center">
                   <MapPin /> {event.locationType}
@@ -148,16 +148,16 @@ function MeetingEventList() {
               <hr className="my-4" />
               <div className="flex justify-between items-center mt-4">
                 <Button
-                  onClick={() => onCopyClickHandler(event)}
+                  onClick={() => handleCopyLink(event)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
                 >
-                  Schedule Time
+                  Set Meeting Time
                 </Button>
                 <Button
                   variant="outline"
                   className="rounded-lg border-primary text-primary px-4 py-2 hover:bg-gray-100"
                 >
-                  Share
+                  Share Event
                 </Button>
               </div>
             </div>
@@ -170,4 +170,4 @@ function MeetingEventList() {
   );
 }
 
-export default MeetingEventList;
+export default EventList;

@@ -12,12 +12,14 @@ function TimeDateSelection({
   prevBooking,
 }) {
   /**
-   * Used to check timeslot whether its already booked or not
-   * @param {*} time
-   * @returns Boolean
+   * This function checks if a time slot has already been booked or not.
+   * @param {*} time - The time slot to check
+   * @returns boolean - Returns true if the time slot is already booked, otherwise false
    */
   const checkTimeSlot = (time) => {
-    return prevBooking.some((item) => item.selectedTime === time);
+    // Create a Set of all booked times for faster lookup
+    const bookedTimes = new Set(prevBooking.map((booking) => booking.selectedTime));
+    return bookedTimes.has(time); // Return true if time is booked
   };
 
   return (
@@ -30,7 +32,7 @@ function TimeDateSelection({
           selected={date}
           onSelect={(d) => handleDateChange(d)}
           className="rounded-lg border p-4 w-full max-w-sm shadow-sm"
-          disabled={(date) => date <= new Date()}
+          disabled={(d) => new Date(d) <= new Date()} // Disable past dates
         />
       </div>
 
@@ -40,11 +42,11 @@ function TimeDateSelection({
         style={{ maxHeight: "450px" }}
       >
         <h2 className="font-bold text-xl text-blue-600 mb-4">Available Time Slots</h2>
-        {timeSlots?.length > 0 ? (
+        {timeSlots?.length ? (
           timeSlots.map((time, index) => (
             <Button
-              key={`timeslot-${index}`} // Add a unique key for each time slot
-              disabled={!enableTimeSlot || checkTimeSlot(time)}
+              key={`timeslot-${index}`} // Each button has a unique key
+              disabled={!enableTimeSlot || checkTimeSlot(time)} // Disable button if the time is not available or already booked
               onClick={() => setSelectedTime(time)}
               className={`border-2 border-primary text-primary hover:bg-primary hover:text-white transition duration-300 ${
                 time === selectedTime ? "bg-primary text-white" : ""

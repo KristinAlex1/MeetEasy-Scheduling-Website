@@ -22,8 +22,8 @@ function Availability() {
   });
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const db = getFirestore(app);
   const { user } = useKindeBrowserClient();
+  const db = getFirestore(app);
 
   useEffect(() => {
     const fetchBusinessInfo = async () => {
@@ -103,9 +103,7 @@ function Availability() {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Available Times
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Available Times</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
