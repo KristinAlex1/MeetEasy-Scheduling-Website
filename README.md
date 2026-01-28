@@ -1,7 +1,7 @@
 # MeetEasy – Scheduling & Meeting Management App
 
 🔗 **Live Demo:** https://meet-easy-scheduling-website.vercel.app  
----
+📂 **Repository:** This GitHub repository
 
 ## 📌 Important Notes Before Using the App
 
@@ -49,10 +49,23 @@ MeetEasy was developed **under academic supervision** as part of my learning pro
 ## 🛠️ Technologies Used
 
 - React / Next.js
-- Google Authentication (via OAuth provider)
+- Google Authentication (OAuth)
 - API-based email notifications
 - JavaScript
 - HTML / CSS
+
+---
+
+## ⚠️ Known Limitations
+
+The following limitations are acknowledged as part of the project’s learning-focused scope:
+
+- Newly created meetings may not immediately appear in all UI components until the page is refreshed.
+- Authentication is optimized for the deployed environment and is not configured for local OAuth testing by default.
+- Error handling and UI feedback are intentionally minimal to keep the project focused on core authentication and scheduling workflows.
+- The application has not been optimized for large-scale production use or high concurrent traffic.
+
+These limitations are documented intentionally to provide transparency and context for reviewers.
 
 ---
 
@@ -64,4 +77,4 @@ This project is maintained as a **portfolio demonstration** of authentication fl
 
 ## 📎 Additional Notes
 
-This project emphasizes learning outcomes, documentation, and real-world application structure. Known limitations are documented intentionally to provide transparency and context for reviewers.
+This project emphasizes learning outcomes, documentation, and real-world application structure. Known behaviors and limitations are documented to ensure clarity for first-time reviewers.
